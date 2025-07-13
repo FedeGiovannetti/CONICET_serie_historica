@@ -1,5 +1,6 @@
 project:
   type: website
+  output-dir: docs
 
 website:
   # title: "CONICET_serie_historica"
@@ -27,3 +28,4 @@ execute:
   echo: false
   message: false
   warning: false
+
