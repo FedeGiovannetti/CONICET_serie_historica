@@ -1,0 +1,125 @@
+---
+title: "Series históricas de becas doctorales y posdoctorales de CONICET"
+---
+
+
+```{r Paquetes y datos, echo=FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+datos <- read.csv("data/ingresos_totales.csv", fileEncoding = "latin1", sep = ";")
+
+theme_litera_minimal <- function(base_size = 12, base_family = "sans") {
+  theme_minimal(base_size = base_size, base_family = base_family) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size * 1.3, hjust = 0.5),
+      plot.subtitle = element_text(size = base_size * 1.1, hjust = 0.5, color = "gray40"),
+      plot.caption = element_text(size = base_size * 0.8, color = "gray50", hjust = 1),
+      axis.title = element_text(face = "bold", size = base_size, color = "gray30"),
+      axis.text = element_text(color = "gray40"),
+      panel.grid.major = element_line(color = "gray90"),
+      panel.grid.minor = element_blank(),
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.background = element_rect(fill = "white", color = NA),
+      legend.position = "bottom",
+      legend.title = element_blank(),
+      legend.text = element_text(size = base_size * 0.9, color = "gray30")
+    )
+}
+
+
+
+scale_color_pastel <- function() {
+  scale_color_manual(values = c(
+    "#A8DADC",  # light teal
+    "#F4A261",  # soft orange
+    "#E5989B",  # dusty pink
+    "#B5E48C",  # mint green
+    "#9D4EDD",  # soft violet
+    "#FFD6A5",  # peach
+    "#8ECAE6"   # sky blue
+  ))
+}
+
+```
+
+
+En este sitio se presentan algunos gráficos mostrando la cantidad de becas doctorales y posdoctorales otorgadas por el CONICET a lo largo de los años. Los valores mostrados son los anunciados por CONICET en su página al momento de la publicación de resultados. Estos valores no incluyen las posibles diferencias por becas adjudicadas, bajas, reconsideraciones u otros. 
+
+Actualmente los datos se muestran para las convocatorias de Temas Generales y Temas Estratégicos. Próximamente se incluirán otro tipo de convocatorias (e.g. fortalecimiento) asi como también los ingresos CIC.
+
+Si te interesa conocer las series históricas para la **Comisión de Psicología (KS7)**, podés acceder acá: [https://fedegiovannetti.github.io/ks7conicet/](https://fedegiovannetti.github.io/ks7conicet/)
+
+Si te interesa un análisis más pormenorizado de becas relacionadas con el estudio del **desarrollo infantil**, podés acceder acá: [https://github.com/AgendasDesarrolloInfantil/Smulski_et_al_2023](https://github.com/AgendasDesarrolloInfantil/Smulski_et_al_2023)
+
+
+<br>
+<br>
+
+
+```{r Becas doctorales, fig.width= 8}
+
+datos %>% 
+  filter(TIPO.CONVOCATORIA == "BECA DOCTORAL") %>% 
+  pivot_longer(cols = -c(TIPO.CONVOCATORIA, AÑO),names_to = "Temas", values_to = "Becas") %>% 
+  mutate(Temas = case_when(
+    Temas == "TOTAL.ESTRATEGICOS" ~ "Temas estratégicos",
+    Temas == "TOTAL.GENERALES"  ~ "Temas generales"
+  )) %>% 
+  
+  ggplot(aes(x = AÑO, y = Becas, color = Temas))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2010, 2024), breaks = c(2010:2024))+
+  # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
+  ggtitle("Becas doctorales CONICET (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.9),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2011, y = 1550), size = 5, alpha = 0.5, hjust = 0.4)+
+  scale_color_pastel()
+
+```
+
+<br>
+<br>
+
+
+```{r Becas posdoctorales, fig.width= 8}
+
+datos %>% 
+  filter(TIPO.CONVOCATORIA == "BECA POSDOC") %>% 
+  pivot_longer(cols = -c(TIPO.CONVOCATORIA, AÑO),names_to = "Temas", values_to = "Becas") %>% 
+  mutate(Temas = case_when(
+    Temas == "TOTAL.ESTRATEGICOS" ~ "Temas estratégicos",
+    Temas == "TOTAL.GENERALES"  ~ "Temas generales"
+  )) %>% 
+  
+  ggplot(aes(x = AÑO, y = Becas, color = Temas))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2010, 2024), breaks = c(2010:2024))+
+  ggtitle("Becas posdoctorales CONICET (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.9),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2011, y = 1200), size = 5, alpha = 0.5, hjust = 0.4)+
+  scale_color_pastel()
+
+```

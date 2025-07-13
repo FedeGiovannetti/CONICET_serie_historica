@@ -1,0 +1,29 @@
+project:
+  type: website
+
+website:
+  # title: "CONICET_serie_historica"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Inicio
+      # - href: about.qmd
+      #   text: Acerca de
+    right:
+      - icon: github
+        menu:
+          - text: Código fuente
+            href: https://code.com
+          - text: Reportar un error
+            href: https://bugs.com
+
+format:
+  html:
+    theme: litera
+    css: styles.css
+    toc: true
+    
+execute:
+  echo: false
+  message: false
+  warning: false
