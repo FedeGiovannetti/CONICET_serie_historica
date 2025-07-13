@@ -11,12 +11,22 @@ website:
       # - href: about.qmd
       #   text: Acerca de
     right:
+
+      - icon: linkedin
+        href: https://www.linkedin.com/in/fedegiovannetti/
+        
+      - icon: envelope
+        href: mailto:giovannettipsi@gmail.com
+        
+      - icon: book
+        href: https://scholar.google.es/citations?user=O257bnQAAAAJ&hl=es
+        
       - icon: github
         menu:
           - text: Código fuente
-            href: https://code.com
+            href: https://github.com/FedeGiovannetti/CONICET_serie_historica
           - text: Reportar un error
-            href: https://bugs.com
+            href: https://github.com/FedeGiovannetti/CONICET_serie_historica/issues
 
 format:
   html:
