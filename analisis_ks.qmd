@@ -1,0 +1,309 @@
+---
+title: "Series históricas de becas doctorales y posdoctorales de CONICET"
+---
+
+
+```{r Paquetes y datos, echo=FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readxl)
+
+datos_ks <- read_excel("data/Datos_serie_historica_KS_CONICET.xlsx")
+
+theme_litera_minimal <- function(base_size = 15, base_family = "sans") {
+  theme_minimal(base_size = base_size, base_family = base_family) +
+    theme(
+      plot.title = element_text(face = "bold", size = base_size * 1.1, hjust = 0.5),
+      plot.subtitle = element_text(size = base_size * 1.1, hjust = 0.5, color = "gray40"),
+      plot.caption = element_text(size = base_size * 0.8, color = "gray50", hjust = 1),
+      axis.title = element_text(face = "bold", size = base_size, color = "gray30"),
+      axis.text = element_text(color = "gray40"),
+      panel.grid.major = element_line(color = "gray90"),
+      panel.grid.minor = element_blank(),
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.background = element_rect(fill = "white", color = NA),
+      legend.position = "bottom",
+      legend.title = element_blank(),
+      legend.text = element_text(size = base_size * 0.9, color = "gray30")
+    )
+}
+
+
+
+scale_color_pastel <- function() {
+  scale_color_manual(values = c(
+    "#A8DADC",  # light teal
+    "#F4A261",  # soft orange
+    "#E5989B",  # dusty pink
+    "#B5E48C",  # mint green
+    "#9D5EDD",  # soft violet
+    "#FFD6A5",  # peach
+    "#8ECAE6",  # sky blue
+    "#FFB5E8",  # pastel pink
+    "#C9CBA3",  # olive-beige pastel
+    "#B9FBC0",  # soft green
+    "#D0BDF4",  # lavender pastel
+    "#FDCB9E"   # light apricot
+  ))
+}
+
+```
+
+
+En este sitio se presentan algunos gráficos mostrando la cantidad de becas doctorales y posdoctorales otorgadas por el CONICET a lo largo de los años. Los valores mostrados son los anunciados por CONICET en su página al momento de la publicación de resultados. Estos valores no incluyen las posibles diferencias por becas adjudicadas, bajas, reconsideraciones u otros. 
+
+Actualmente los datos se muestran para las convocatorias de Temas Generales y Temas Estratégicos. Próximamente se incluirán otro tipo de convocatorias (e.g. fortalecimiento) asi como también los ingresos CIC.
+
+Si te interesa conocer las series históricas para la **Comisión de Psicología (KS7)**, podés acceder acá: [https://fedegiovannetti.github.io/ks7conicet/](https://fedegiovannetti.github.io/ks7conicet/)
+
+Si te interesa un análisis más pormenorizado de becas relacionadas con el estudio del **desarrollo infantil**, podés acceder acá: [https://github.com/AgendasDesarrolloInfantil/Smulski_et_al_2023](https://github.com/AgendasDesarrolloInfantil/Smulski_et_al_2023)
+
+
+<br>
+<br>
+
+```{r total doctorales KS, fig.width= 8}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas doctorales") %>% 
+  group_by(Modalidad, Convocatoria) %>% 
+  summarise(Otorgadas = sum(Otorgadas),
+            Postulantes = sum(Postulantes)) %>% 
+  # filter(Modalidad == "Temas generales") %>% 
+
+  
+  ggplot(aes(x = Convocatoria, y = Otorgadas, color = Modalidad))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2022, 2024), breaks = c(2022:2024))+
+  ggtitle("Becas doctorales CONICET para KS (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    # legend.position = c(0.82, 0.9),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2022.2, y = 30), size = 5, alpha = 0.5, hjust = 0.4)+
+  scale_color_pastel()
+
+
+```
+
+```{r total doctorales KS barras apiladas, fig.width= 8}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas doctorales") %>% 
+  group_by(Convocatoria) %>% 
+  summarise(
+    Otorgadas = sum(Otorgadas),
+    Postulantes = sum(Postulantes)
+  ) %>%
+  mutate(
+    Porcentaje = Otorgadas / Postulantes,
+    Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+  ) %>%
+  pivot_longer(
+    cols = c(Otorgadas, Postulantes), 
+    names_to = "Estado", 
+    values_to = "Cantidad"
+  ) %>%
+  ggplot(aes(x = Convocatoria)) +
+  
+  # Bars for Postulantes
+  geom_bar(
+    data = ~ subset(., Estado == "Postulantes"),
+    aes(y = Cantidad, fill = Estado),
+    stat = "identity",
+    alpha = 0.5
+  ) +
+  
+  # Line for Otorgadas
+  geom_line(
+    data = ~ subset(., Estado == "Otorgadas"),
+    aes(y = Cantidad, color = Estado, group = 1),
+    linewidth = 2
+  ) +
+
+  # Points on the line
+  geom_point(
+    data = ~ subset(., Estado == "Otorgadas"),
+    aes(y = Cantidad, color = Estado),
+    size = 5
+  ) +
+
+  # Percentage labels above points
+  geom_label(
+    data = ~ subset(., Estado == "Otorgadas"),
+    aes(y = Cantidad, label = Porcentaje_label),
+    vjust = -0.5,
+    color = "gray30",
+    size = 4
+  ) +
+
+  scale_fill_manual(values = c("Postulantes" = "#A8DADC")) +
+  scale_color_manual(values = c("Otorgadas" = "#F4A261")) +
+  labs(
+    y = "Cantidad",
+    fill = "Estado",
+    color = "Estado"
+  ) +
+  # scale_x_continuous(limits = c(2022, 2024), breaks = c(2022:2024))
+  ggtitle("Becas doctorales CONICET para KS (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    # legend.position = c(0.82, 0.9),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Cantidad", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2021.9, y = 30), size = 5, alpha = 0.2, hjust = 0.4)
+
+
+```
+
+
+
+```{r total postdoctorales KS barras apiladas, fig.width= 8}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas postdoctorales") %>% 
+  group_by(Convocatoria) %>% 
+  summarise(
+    Otorgadas = sum(Otorgadas),
+    Postulantes = sum(Postulantes)
+  ) %>%
+  mutate(
+    Porcentaje = Otorgadas / Postulantes,
+    Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+  ) %>%
+  pivot_longer(
+    cols = c(Otorgadas, Postulantes), 
+    names_to = "Estado", 
+    values_to = "Cantidad"
+  ) %>%
+  ggplot(aes(x = Convocatoria)) +
+  
+  # Bars for Postulantes
+  geom_bar(
+    data = ~ subset(., Estado == "Postulantes"),
+    aes(y = Cantidad, fill = Estado),
+    stat = "identity",
+    alpha = 0.5
+  ) +
+  
+  # Line for Otorgadas
+  geom_line(
+    data = ~ subset(., Estado == "Otorgadas"),
+    aes(y = Cantidad, color = Estado, group = 1),
+    linewidth = 2
+  ) +
+
+  # Points on the line
+  geom_point(
+    data = ~ subset(., Estado == "Otorgadas"),
+    aes(y = Cantidad, color = Estado),
+    size = 5
+  ) +
+
+  # Percentage labels above points
+  geom_label(
+    data = ~ subset(., Estado == "Otorgadas"),
+    aes(y = Cantidad, label = Porcentaje_label),
+    vjust = -0.5,
+    color = "gray30",
+    size = 4
+  ) +
+
+  scale_fill_manual(values = c("Postulantes" = "#A8DADC")) +
+  scale_color_manual(values = c("Otorgadas" = "#F4A261")) +
+  labs(
+    y = "Cantidad",
+    fill = "Estado",
+    color = "Estado"
+  ) +
+  # scale_x_continuous(limits = c(2022, 2024), breaks = c(2022:2024))
+  ggtitle("Becas postdoctorales CONICET para KS (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    # legend.position = c(0.82, 0.9),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Cantidad", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2021.9, y = 30), size = 5, alpha = 0.2, hjust = 0.4)
+
+```
+
+```{r Becas doctorales, fig.width= 8}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas doctorales") %>% 
+  filter(Modalidad == "Temas generales") %>% 
+
+  
+  ggplot(aes(x = Convocatoria, y = Otorgadas, color = Comisión))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2022, 2024), breaks = c(2022:2024))+
+  ggtitle("Becas doctorales CONICET para KS temas generales\n(serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    # legend.position = c(0.82, 0.9),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2022.2, y = 55), size = 5, alpha = 0.5, hjust = 0.4)+
+  scale_color_pastel()
+
+```
+
+<br>
+<br>
+
+
+```{r Becas posdoctorales, fig.width= 8}
+
+
+datos_ks %>% 
+  filter(Escalafon == "Becas postdoctorales") %>% 
+  filter(Modalidad == "Temas generales") %>% 
+
+  
+  ggplot(aes(x = Convocatoria, y = Otorgadas, color = Comisión))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2022, 2024), breaks = c(2022:2024))+
+  ggtitle("Becas postodctorales CONICET para KS temas generales\n(serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    # legend.position = c(0.82, 0.9),
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2022.2, y = 35), size = 5, alpha = 0.5, hjust = 0.4)+
+  scale_color_pastel()
+
+```
