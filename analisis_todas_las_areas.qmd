@@ -1,0 +1,88 @@
+---
+title: "Análisis general (todas las áreas)"
+---
+
+
+```{r Paquetes y datos, echo=FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+source("helper/plot_theming.R")
+
+datos <- read.csv("data/ingresos_totales.csv", fileEncoding = "latin1", sep = ";")
+
+
+```
+
+
+En esta sección, se visualizan los datos de becas doctorales y postdoctorales sin agrupar por Gran Área.
+
+<br>
+<br>
+
+
+```{r Becas doctorales, fig.width= 8}
+
+datos %>% 
+  filter(TIPO.CONVOCATORIA == "BECA DOCTORAL") %>% 
+  pivot_longer(cols = -c(TIPO.CONVOCATORIA, AÑO),names_to = "Temas", values_to = "Becas") %>% 
+  mutate(Temas = case_when(
+    Temas == "TOTAL.ESTRATEGICOS" ~ "Temas estratégicos",
+    Temas == "TOTAL.GENERALES"  ~ "Temas generales"
+  )) %>% 
+  
+  ggplot(aes(x = AÑO, y = Becas, color = Temas))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2010, 2024), breaks = c(2010:2024))+
+  # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
+  ggtitle("Becas doctorales CONICET (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.9),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2011, y = 1550), size = 5, alpha = 0.5, hjust = 0.4)+
+  scale_color_pastel()
+
+```
+
+<br>
+<br>
+
+
+```{r Becas posdoctorales, fig.width= 8}
+
+datos %>% 
+  filter(TIPO.CONVOCATORIA == "BECA POSDOC") %>% 
+  pivot_longer(cols = -c(TIPO.CONVOCATORIA, AÑO),names_to = "Temas", values_to = "Becas") %>% 
+  mutate(Temas = case_when(
+    Temas == "TOTAL.ESTRATEGICOS" ~ "Temas estratégicos",
+    Temas == "TOTAL.GENERALES"  ~ "Temas generales"
+  )) %>% 
+  
+  ggplot(aes(x = AÑO, y = Becas, color = Temas))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2010, 2024), breaks = c(2010:2024))+
+  ggtitle("Becas posdoctorales CONICET (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.9),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2011, y = 1200), size = 5, alpha = 0.5, hjust = 0.4)+
+  scale_color_pastel()
+
+```
