@@ -1,0 +1,635 @@
+---
+title: "Análisis Gran Area Ciencias Sociales y Humanidades (KS)"
+---
+
+
+```{r Paquetes y datos, echo=FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readxl)
+source("helper/plot_theming.R")
+
+datos_ks <- read_excel("data/Datos_serie_historica_KS_CONICET.xlsx")
+
+
+```
+
+
+En esta sección, se visualizan los datos de becas doctorales y postdoctorales para el Gran Área de Ciencias Sociales y Humanidades (KS). Es importante tener en cuenta que algunas de las comisiones fueron dividiendose y cambiando su composición a lo largo de los años. Ponemos a disposición los datos con la idea de que quienes quieran hacer otros análisis, o focalizarse en alguna comisión en particular, puedan hacerlo con el menor esfuerzo posible.
+
+<br>
+<br>
+
+<details>
+  <summary><h2>Becas doctorales para todo el gran área</h2></summary>
+  
+<div class="scrolling">
+
+::: scrolling
+
+```{r total doctorales KS, fig.width= 8}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas doctorales") %>% 
+  group_by(Modalidad, Convocatoria) %>% 
+  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
+            Postulantes = sum(Postulantes, na.rm = T)) %>% 
+  mutate_all(~na_if(., 0)) %>%
+  ungroup() %>% 
+  complete(Modalidad, Convocatoria = 2015:2024) %>%
+  
+  ggplot(aes(x = Convocatoria, y = Otorgadas, color = Modalidad))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2015, 2024), breaks = c(2015:2024))+
+  # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
+  ggtitle("Becas doctorales CONICET para Ks (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.8),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2016.3, y = 400), size = 5, alpha = 0.2, hjust = 0.4, color = "grey20")+
+  scale_color_pastel()
+
+
+```
+
+```{r total doctorales KS generales barras apiladas, fig.width= 8}
+
+  datos_ks %>% 
+    filter(Escalafon == "Becas doctorales") %>% 
+    filter(Modalidad == "Temas generales") %>% 
+    group_by(Convocatoria) %>% 
+    summarise(
+      Otorgadas = sum(Otorgadas, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T)
+    ) %>%
+    mutate(
+      Porcentaje = Otorgadas / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) %>%
+    pivot_longer(
+      cols = c(Otorgadas, Postulantes), 
+      names_to = "Estado", 
+      values_to = "Cantidad"
+    ) %>%
+    mutate(Estado = factor(Estado, levels = c("Postulantes", "Otorgadas"))) %>% 
+    ggplot(aes(x = Convocatoria, y = Cantidad, fill = Estado)) +
+    
+    
+    
+    # Bars for Postulantes
+    geom_bar(
+      # data = ~ subset(., Estado == "Postulantes"),
+      # aes(y = Cantidad, fillc = Estado),
+      # aes(color = "white"),
+      stat = "identity"
+      # alpha = 0.5
+    ) +
+      # Percentage labels above points
+    geom_label(
+      data = ~ subset(., Estado == "Otorgadas"),
+
+      aes(x = Convocatoria, y = Cantidad, label = Porcentaje_label),
+      vjust = -0.5,
+      size = 5,
+      fill = "white",
+      color = "black"
+    ) +
+  
+    scale_x_continuous(limits = c(2018.5, 2024.5), breaks = c(2019:2024))+
+    ggtitle("Becas doctorales CONICET para temas generales KS\n(serie histórica postulantes y otorgadas)")+
+    theme_litera_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0.80, 0.80),
+    #   legend.position = "right",
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size=14, face="italic", color="black")
+    ) +
+    labs(y = "Cantidad", x = "Convocatoria")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 1700), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
+  scale_fill_pastel()
+
+
+```
+
+```{r total doctorales KS estrategicos barras apiladas, fig.width= 8}
+
+  datos_ks %>% 
+    filter(Escalafon == "Becas doctorales") %>% 
+    filter(Modalidad == "Temas estratégicos") %>% 
+    group_by(Convocatoria) %>% 
+    summarise(
+      Otorgadas = sum(Otorgadas, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T)
+    ) %>%
+    mutate(
+      Porcentaje = Otorgadas / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) %>%
+    pivot_longer(
+      cols = c(Otorgadas, Postulantes), 
+      names_to = "Estado", 
+      values_to = "Cantidad"
+    ) %>%
+    mutate(Estado = factor(Estado, levels = c("Postulantes", "Otorgadas"))) %>% 
+    ggplot(aes(x = Convocatoria, y = Cantidad, fill = Estado)) +
+    
+    
+    
+    # Bars for Postulantes
+    geom_bar(
+      # data = ~ subset(., Estado == "Postulantes"),
+      # aes(y = Cantidad, fillc = Estado),
+      # aes(color = "white"),
+      stat = "identity"
+      # alpha = 0.5
+    ) +
+      # Percentage labels above points
+    geom_label(
+      data = ~ subset(., Estado == "Otorgadas"),
+
+      aes(x = Convocatoria, y = Cantidad, label = Porcentaje_label),
+      vjust = -0.5,
+      size = 5,
+      fill = "white",
+      color = "black"
+    ) +
+  
+    scale_x_continuous(limits = c(2018.5, 2024.5), breaks = c(2019:2024))+
+    ggtitle("Becas doctorales CONICET para temas estratégicos KS\n(serie histórica postulantes y otorgadas)")+
+    theme_litera_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0.80, 0.80),
+    #   legend.position = "right",
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size=14, face="italic", color="black")
+    ) +
+    labs(y = "Cantidad", x = "Convocatoria")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 350), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
+  scale_fill_pastel()
+
+
+```
+
+</div>
+</details>
+
+<br>
+<br>
+
+
+<details>
+  <summary><h2>Becas postdoctorales para todo el gran área</h2></summary>
+  
+<div class="scrolling">
+
+```{r total postdoctorales KS, fig.width= 8}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas postdoctorales") %>% 
+  group_by(Modalidad, Convocatoria) %>% 
+  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
+            Postulantes = sum(Postulantes, na.rm = T)) %>% 
+  mutate_all(~na_if(., 0)) %>%
+  ungroup() %>% 
+  complete(Modalidad, Convocatoria = 2015:2024) %>%
+  
+  ggplot(aes(x = Convocatoria, y = Otorgadas, color = Modalidad))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2015, 2024), breaks = c(2015:2024))+
+  # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
+  ggtitle("Becas doctorales CONICET para Ks (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.8),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2016.3, y = 450), size = 5, alpha = 0.2, hjust = 0.4, color = "grey20")+
+  scale_color_pastel()
+
+
+```
+
+
+```{r total postdoctorales KS generales barras apiladas, fig.width= 8}
+
+  datos_ks %>% 
+    filter(Escalafon == "Becas postdoctorales") %>% 
+    filter(Modalidad == "Temas generales") %>% 
+    group_by(Convocatoria) %>% 
+    summarise(
+      Otorgadas = sum(Otorgadas, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T)
+    ) %>%
+    mutate(
+      Porcentaje = Otorgadas / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) %>%
+    pivot_longer(
+      cols = c(Otorgadas, Postulantes), 
+      names_to = "Estado", 
+      values_to = "Cantidad"
+    ) %>%
+    mutate(Estado = factor(Estado, levels = c("Postulantes", "Otorgadas"))) %>% 
+    ggplot(aes(x = Convocatoria, y = Cantidad, fill = Estado)) +
+    
+    
+    
+    # Bars for Postulantes
+    geom_bar(
+      # data = ~ subset(., Estado == "Postulantes"),
+      # aes(y = Cantidad, fillc = Estado),
+      # aes(color = "white"),
+      stat = "identity"
+      # alpha = 0.5
+    ) +
+      # Percentage labels above points
+    geom_label(
+      data = ~ subset(., Estado == "Otorgadas"),
+
+      aes(x = Convocatoria, y = Cantidad, label = Porcentaje_label),
+      vjust = -0.5,
+      size = 5,
+      fill = "white",
+      color = "black"
+    ) +
+  
+    scale_x_continuous(limits = c(2018.5, 2024.5), breaks = c(2019:2024))+
+    ggtitle("Becas postoctorales CONICET para temas generales KS\n(serie histórica postulantes y otorgadas)")+
+    theme_litera_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0.80, 0.80),
+    #   legend.position = "right",
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size=14, face="italic", color="black")
+    ) +
+    labs(y = "Cantidad", x = "Convocatoria")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 1700), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
+  scale_fill_pastel()
+
+
+```
+
+```{r total postdoctorales KS estrategicos barras apiladas, fig.width= 8}
+
+  datos_ks %>% 
+    filter(Escalafon == "Becas postdoctorales") %>% 
+    filter(Modalidad == "Temas estratégicos") %>% 
+    group_by(Convocatoria) %>% 
+    summarise(
+      Otorgadas = sum(Otorgadas, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T)
+    ) %>%
+    mutate(
+      Porcentaje = Otorgadas / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) %>%
+    pivot_longer(
+      cols = c(Otorgadas, Postulantes), 
+      names_to = "Estado", 
+      values_to = "Cantidad"
+    ) %>%
+    mutate(Estado = factor(Estado, levels = c("Postulantes", "Otorgadas"))) %>% 
+    ggplot(aes(x = Convocatoria, y = Cantidad, fill = Estado)) +
+    
+    
+    
+    # Bars for Postulantes
+    geom_bar(
+      # data = ~ subset(., Estado == "Postulantes"),
+      # aes(y = Cantidad, fillc = Estado),
+      # aes(color = "white"),
+      stat = "identity"
+      # alpha = 0.5
+    ) +
+      # Percentage labels above points
+    geom_label(
+      data = ~ subset(., Estado == "Otorgadas"),
+
+      aes(x = Convocatoria, y = Cantidad, label = Porcentaje_label),
+      vjust = -0.5,
+      size = 5,
+      fill = "white",
+      color = "black"
+    ) +
+  
+    scale_x_continuous(limits = c(2018.5, 2024.5), breaks = c(2019:2024))+
+    ggtitle("Becas postdoctorales CONICET para temas estratégicos KS\n(serie histórica postulantes y otorgadas)")+
+    theme_litera_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0.80, 0.80),
+    #   legend.position = "right",
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size=14, face="italic", color="black")
+    ) +
+    labs(y = "Cantidad", x = "Convocatoria")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 200), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
+  scale_fill_pastel()
+
+
+```
+
+</div>
+</details>
+
+<br>
+<br>
+
+
+<details>
+  <summary><h2>Becas doctorales por comisión </h2></summary>
+  
+<div class="scrolling">
+
+```{r tabla doctorales por comision, fig.width=8}
+
+library(DT)
+library(shiny)
+
+df = datos_ks %>% 
+  filter(Escalafon == "Becas doctorales") %>% 
+  group_by(Modalidad, Convocatoria, Comisión) %>% 
+  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
+            Postulantes = sum(Postulantes, na.rm = T)) %>% 
+  # mutate_all(~na_if(., 0)) %>%
+    mutate(across(where(is.numeric), ~na_if(., 0))) %>%
+  ungroup() %>% 
+  complete(Modalidad, Convocatoria = 2015:2024) %>%
+  mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", "KS6",
+                                                "KS7", "KS8", "KS9", "KS10"))) %>% 
+  arrange(Comisión) %>% 
+  pivot_wider(id_cols = Comisión, names_from = c(Modalidad,Convocatoria), values_from = "Otorgadas" )
+
+
+Convocatoria <- 2015:2024
+# Crear header con años arriba y TG/TE abajo
+sketch <- withTags(
+  table(
+    class = 'display',
+    thead(
+      tr(
+        th(rowspan = 2, "Comisión"),
+        lapply(Convocatoria, function(a) 
+          th(
+            colspan = 2, 
+            HTML(paste0('<div style="text-align:center"><br>', a, '</div>'))
+          )
+        )
+      ),
+      tr(
+        lapply(rep(c("TG", "TE"), length(Convocatoria)), function(x) 
+          th(HTML(paste0('<div style="text-align:center">', x, '</div>')))
+        )
+      )
+    )
+  )
+)
+
+library(DT)
+library(htmltools)
+
+css <- "
+table.dataTable {
+  font-size: 12px !important;
+}
+"
+
+browsable(
+  tagList(
+    tags$style(HTML(css)),
+    datatable(
+      df,
+      container = sketch,
+      rownames = FALSE,
+      extensions = 'FixedColumns',           # Load FixedColumns extension
+      options = list(
+        scrollY = "400px",
+        scrollX = TRUE,                       # Enable horizontal scrolling
+        fixedColumns = list(leftColumns = 1), # Freeze first column
+        scrollCollapse = TRUE,
+        paging = TRUE,
+        dom = 'ftip',
+        filter = "top",
+        autoWidth = TRUE,
+        columnDefs = list(
+          list(className = 'dt-left', targets = 0),
+          list(className = 'dt-center', targets = 1:(ncol(df)-1))
+        )
+      )
+    )
+  )
+)
+
+
+  
+
+```
+
+<br>
+<br>
+
+```{r por comision doctorales KS, fig.width= 10, fig.height=20}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas doctorales") %>% 
+  group_by(Modalidad, Convocatoria, Comisión) %>% 
+  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
+            Postulantes = sum(Postulantes, na.rm = T)) %>% 
+  # mutate_all(~na_if(., 0)) %>%
+    mutate(across(where(is.numeric), ~na_if(., 0))) %>%
+  ungroup() %>% 
+  complete(Modalidad, Convocatoria = 2015:2024) %>%
+  mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", "KS6",
+                                                "KS7", "KS8", "KS9", "KS10"))) %>% 
+  
+  ggplot(aes(x = Convocatoria, y = Otorgadas, color = Modalidad))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2015, 2024), breaks = c(2015:2024))+
+  scale_y_continuous(limits = c(0, 100))+
+  # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
+  ggtitle("Becas doctorales CONICET para las distintas comisiones de KS (serie histórica)")+
+  facet_wrap(~Comisión,ncol = 2)+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    # legend.position = c(0.82, 0.8),
+    legend.position = "top",
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  # geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2016.3, y = 400), size = 5, alpha = 0.2, hjust = 0.4, color = "grey20")+
+  scale_color_pastel()
+
+
+```
+
+</div>
+</details>
+
+<br>
+<br>
+
+
+<details>
+  <summary><h2>Becas postdoctorales por comisión </h2></summary>
+  
+<div class="scrolling">
+
+```{r tabla postdoctorales por comision, fig.width=8}
+
+library(DT)
+library(shiny)
+
+df = datos_ks %>% 
+  filter(Escalafon == "Becas postdoctorales") %>% 
+  group_by(Modalidad, Convocatoria, Comisión) %>% 
+  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
+            Postulantes = sum(Postulantes, na.rm = T)) %>% 
+  # mutate_all(~na_if(., 0)) %>%
+    mutate(across(where(is.numeric), ~na_if(., 0))) %>%
+  ungroup() %>% 
+  complete(Modalidad, Convocatoria = 2015:2024) %>%
+  mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", "KS6",
+                                                "KS7", "KS8", "KS9", "KS10"))) %>% 
+  arrange(Comisión) %>% 
+  pivot_wider(id_cols = Comisión, names_from = c(Modalidad,Convocatoria), values_from = "Otorgadas" )
+
+
+Convocatoria <- 2015:2024
+# Crear header con años arriba y TG/TE abajo
+sketch <- withTags(
+  table(
+    class = 'display',
+    thead(
+      tr(
+        th(rowspan = 2, "Comisión"),
+        lapply(Convocatoria, function(a) 
+          th(
+            colspan = 2, 
+            HTML(paste0('<div style="text-align:center"><br>', a, '</div>'))
+          )
+        )
+      ),
+      tr(
+        lapply(rep(c("TG", "TE"), length(Convocatoria)), function(x) 
+          th(HTML(paste0('<div style="text-align:center">', x, '</div>')))
+        )
+      )
+    )
+  )
+)
+
+library(DT)
+library(htmltools)
+
+css <- "
+table.dataTable {
+  font-size: 12px !important;
+}
+"
+
+browsable(
+  tagList(
+    tags$style(HTML(css)),
+    datatable(
+      df,
+      container = sketch,
+      rownames = FALSE,
+      extensions = 'FixedColumns',           # Load FixedColumns extension
+      options = list(
+        scrollY = "400px",
+        scrollX = TRUE,                       # Enable horizontal scrolling
+        fixedColumns = list(leftColumns = 1), # Freeze first column
+        scrollCollapse = TRUE,
+        paging = TRUE,
+        dom = 'ftip',
+        filter = "top",
+        autoWidth = TRUE,
+        columnDefs = list(
+          list(className = 'dt-left', targets = 0),
+          list(className = 'dt-center', targets = 1:(ncol(df)-1))
+        )
+      )
+    )
+  )
+)
+
+
+  
+
+```
+
+<br>
+<br>
+
+```{r por comision postdoctorales KS, fig.width= 10, fig.height=20}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas postdoctorales") %>% 
+  group_by(Modalidad, Convocatoria, Comisión) %>% 
+  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
+            Postulantes = sum(Postulantes, na.rm = T)) %>% 
+  # mutate_all(~na_if(., 0)) %>%
+    mutate(across(where(is.numeric), ~na_if(., 0))) %>%
+  ungroup() %>% 
+  complete(Modalidad, Convocatoria = 2015:2024) %>%
+  mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", "KS6",
+                                                "KS7", "KS8", "KS9", "KS10"))) %>% 
+  
+  ggplot(aes(x = Convocatoria, y = Otorgadas, color = Modalidad))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2015, 2024), breaks = c(2015:2024))+
+  scale_y_continuous(limits = c(0, 100))+
+  # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
+  ggtitle("Becas postdoctorales CONICET para las distintas comisiones de KS (serie histórica)")+
+  facet_wrap(~Comisión,ncol = 2)+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    # legend.position = c(0.82, 0.8),
+    legend.position = "top",
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  # geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2016.3, y = 400), size = 5, alpha = 0.2, hjust = 0.4, color = "grey20")+
+  scale_color_pastel()
+
+
+```
+
+<br>
+<br>
+
+
+
