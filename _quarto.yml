@@ -6,6 +6,9 @@ website:
   # title: "CONICET_serie_historica"
   navbar:
     left:
+      contents:
+        - analisis_todas_las_areas.qmd
+        - analisis_ks.qmd
       - href: index.qmd
         text: Inicio
       # - href: about.qmd
