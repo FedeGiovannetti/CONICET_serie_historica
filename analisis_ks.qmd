@@ -55,7 +55,9 @@ datos_ks %>%
     axis.title.x = element_text(margin = margin(t = 10)),
     plot.subtitle = element_text(size=14, face="italic", color="black")
   ) +
-  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  labs(y = "Becas otorgadas", x = "Convocatoria",
+       
+       caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
   geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2016.3, y = 400), size = 5, alpha = 0.2, hjust = 0.4, color = "grey20")+
   scale_color_pastel()
 
@@ -116,7 +118,9 @@ datos_ks %>%
       axis.title.x = element_text(margin = margin(t = 10)),
       plot.subtitle = element_text(size=14, face="italic", color="black")
     ) +
-    labs(y = "Cantidad", x = "Convocatoria")+
+    labs(y = "Cantidad", x = "Convocatoria",
+         
+       caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
     geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 1700), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
   scale_fill_pastel()
 
@@ -177,7 +181,9 @@ datos_ks %>%
       axis.title.x = element_text(margin = margin(t = 10)),
       plot.subtitle = element_text(size=14, face="italic", color="black")
     ) +
-    labs(y = "Cantidad", x = "Convocatoria")+
+    labs(y = "Cantidad", x = "Convocatoria", 
+         
+       caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
     geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 350), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
   scale_fill_pastel()
 
@@ -222,8 +228,11 @@ datos_ks %>%
     axis.title.x = element_text(margin = margin(t = 10)),
     plot.subtitle = element_text(size=14, face="italic", color="black")
   ) +
-  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  labs(y = "Becas otorgadas", x = "Convocatoria",
+       caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente"
+)+
   geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2016.3, y = 450), size = 5, alpha = 0.2, hjust = 0.4, color = "grey20")+
+  
   scale_color_pastel()
 
 
@@ -242,7 +251,10 @@ datos_ks %>%
     ) %>%
     mutate(
       Porcentaje = Otorgadas / Postulantes,
-      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+      # Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+        Porcentaje_label = ifelse(is.finite(Porcentaje),
+                            scales::percent(Porcentaje, accuracy = 1),
+                            NA_character_)
     ) %>%
     pivot_longer(
       cols = c(Otorgadas, Postulantes), 
@@ -284,7 +296,9 @@ datos_ks %>%
       axis.title.x = element_text(margin = margin(t = 10)),
       plot.subtitle = element_text(size=14, face="italic", color="black")
     ) +
-    labs(y = "Cantidad", x = "Convocatoria")+
+    labs(y = "Cantidad", x = "Convocatoria",
+         
+       caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
     geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 1700), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
   scale_fill_pastel()
 
@@ -303,7 +317,9 @@ datos_ks %>%
     ) %>%
     mutate(
       Porcentaje = Otorgadas / Postulantes,
-      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+              Porcentaje_label = ifelse(is.finite(Porcentaje),
+                            scales::percent(Porcentaje, accuracy = 1),
+                            NA_character_)
     ) %>%
     pivot_longer(
       cols = c(Otorgadas, Postulantes), 
@@ -345,7 +361,9 @@ datos_ks %>%
       axis.title.x = element_text(margin = margin(t = 10)),
       plot.subtitle = element_text(size=14, face="italic", color="black")
     ) +
-    labs(y = "Cantidad", x = "Convocatoria")+
+    labs(y = "Cantidad", x = "Convocatoria",
+         
+       caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
     geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 200), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
   scale_fill_pastel()
 
@@ -483,7 +501,8 @@ datos_ks %>%
     axis.title.x = element_text(margin = margin(t = 10)),
     plot.subtitle = element_text(size=14, face="italic", color="black")
   ) +
-  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  labs(y = "Becas otorgadas", x = "Convocatoria", 
+       caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
   # geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2016.3, y = 400), size = 5, alpha = 0.2, hjust = 0.4, color = "grey20")+
   scale_color_pastel()
 
@@ -621,7 +640,9 @@ datos_ks %>%
     axis.title.x = element_text(margin = margin(t = 10)),
     plot.subtitle = element_text(size=14, face="italic", color="black")
   ) +
-  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  labs(y = "Becas otorgadas", x = "Convocatoria", 
+       
+       caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
   # geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2016.3, y = 400), size = 5, alpha = 0.2, hjust = 0.4, color = "grey20")+
   scale_color_pastel()
 
