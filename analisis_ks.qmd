@@ -9,15 +9,23 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(readxl)
+library(DT)
+library(shiny)
+library(htmltools)
 source("helper/plot_theming.R")
+source("helper/Tables_helper.R")
 
-datos_ks <- read_excel("data/Datos_serie_historica_KS_CONICET.xlsx")
+datos_ks <- read_excel("data/Datos_serie_historica_KS_CONICET.xlsx", na = "NA")
 
 
 ```
 
 
 En esta sección, se visualizan los datos de becas doctorales y postdoctorales para el Gran Área de Ciencias Sociales y Humanidades (KS). Es importante tener en cuenta que algunas de las comisiones fueron dividiendose y cambiando su composición a lo largo de los años. Ponemos a disposición los datos con la idea de que quienes quieran hacer otros análisis, o focalizarse en alguna comisión en particular, puedan hacerlo con el menor esfuerzo posible.
+
+En primer lugar, se presentan los datos agrupados para becas doctorales y postdoctorales. Luego, se  muestran desagregados por comisión.
+
+Es relevante mencionar que los datos de postulantes para becas postdoctorales 2025 son los anunciados como "no otorgados" y probablemente sufran leves cambios cuando el organismo anuncie oficialmente la cantidad de postulantes.
 
 <br>
 <br>
@@ -27,7 +35,7 @@ En esta sección, se visualizan los datos de becas doctorales y postdoctorales p
   
 <div class="scrolling">
 
-::: scrolling
+<!-- ::: scrolling -->
 
 ```{r total doctorales KS, fig.width= 8}
 
@@ -121,7 +129,7 @@ datos_ks %>%
     labs(y = "Cantidad", x = "Convocatoria",
          
        caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
-    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 1700), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 1700), size = 5, alpha = 0.3, hjust = 0.4, color = "Grey40")+
   scale_fill_pastel()
 
 
@@ -184,7 +192,7 @@ datos_ks %>%
     labs(y = "Cantidad", x = "Convocatoria", 
          
        caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
-    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 350), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 350), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
   scale_fill_pastel()
 
 
@@ -219,7 +227,7 @@ datos_ks %>%
   theme_minimal(base_size = 18)+
   scale_x_continuous(limits = c(2015, 2024), breaks = c(2015:2024))+
   # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
-  ggtitle("Becas doctorales CONICET para Ks (serie histórica)")+
+  ggtitle("Becas postdoctorales CONICET para KS (serie histórica)")+
   theme_litera_minimal() +
   theme(
     legend.title = element_blank(),
@@ -299,7 +307,7 @@ datos_ks %>%
     labs(y = "Cantidad", x = "Convocatoria",
          
        caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
-    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 1700), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 650), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
   scale_fill_pastel()
 
 
@@ -364,7 +372,7 @@ datos_ks %>%
     labs(y = "Cantidad", x = "Convocatoria",
          
        caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
-    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.1, y = 200), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey20")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 170), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
   scale_fill_pastel()
 
 
@@ -384,84 +392,8 @@ datos_ks %>%
 
 ```{r tabla doctorales por comision, fig.width=8}
 
-library(DT)
-library(shiny)
-
-df = datos_ks %>% 
-  filter(Escalafon == "Becas doctorales") %>% 
-  group_by(Modalidad, Convocatoria, Comisión) %>% 
-  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
-            Postulantes = sum(Postulantes, na.rm = T)) %>% 
-  # mutate_all(~na_if(., 0)) %>%
-    mutate(across(where(is.numeric), ~na_if(., 0))) %>%
-  ungroup() %>% 
-  complete(Modalidad, Convocatoria = 2015:2024) %>%
-  mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", "KS6",
-                                                "KS7", "KS8", "KS9", "KS10"))) %>% 
-  arrange(Comisión) %>% 
-  pivot_wider(id_cols = Comisión, names_from = c(Modalidad,Convocatoria), values_from = "Otorgadas" )
-
-
-Convocatoria <- 2015:2024
-# Crear header con años arriba y TG/TE abajo
-sketch <- withTags(
-  table(
-    class = 'display',
-    thead(
-      tr(
-        th(rowspan = 2, "Comisión"),
-        lapply(Convocatoria, function(a) 
-          th(
-            colspan = 2, 
-            HTML(paste0('<div style="text-align:center"><br>', a, '</div>'))
-          )
-        )
-      ),
-      tr(
-        lapply(rep(c("TG", "TE"), length(Convocatoria)), function(x) 
-          th(HTML(paste0('<div style="text-align:center">', x, '</div>')))
-        )
-      )
-    )
-  )
-)
-
-library(DT)
-library(htmltools)
-
-css <- "
-table.dataTable {
-  font-size: 12px !important;
-}
-"
-
-browsable(
-  tagList(
-    tags$style(HTML(css)),
-    datatable(
-      df,
-      container = sketch,
-      rownames = FALSE,
-      extensions = 'FixedColumns',           # Load FixedColumns extension
-      options = list(
-        scrollY = "400px",
-        scrollX = TRUE,                       # Enable horizontal scrolling
-        fixedColumns = list(leftColumns = 1), # Freeze first column
-        scrollCollapse = TRUE,
-        paging = TRUE,
-        dom = 'ftip',
-        filter = "top",
-        autoWidth = TRUE,
-        columnDefs = list(
-          list(className = 'dt-left', targets = 0),
-          list(className = 'dt-center', targets = 1:(ncol(df)-1))
-        )
-      )
-    )
-  )
-)
-
-
+datos_ks %>% 
+  custom_table("Becas doctorales")
   
 
 ```
@@ -472,26 +404,27 @@ browsable(
 ```{r por comision doctorales KS, fig.width= 10, fig.height=20}
 
 datos_ks %>% 
+  filter(!is.na(Otorgadas)) %>% 
   filter(Escalafon == "Becas doctorales") %>% 
   group_by(Modalidad, Convocatoria, Comisión) %>% 
   summarise(Otorgadas = sum(Otorgadas, na.rm = T),
             Postulantes = sum(Postulantes, na.rm = T)) %>% 
   # mutate_all(~na_if(., 0)) %>%
-    mutate(across(where(is.numeric), ~na_if(., 0))) %>%
+    # mutate(across(where(is.numeric), ~na_if(., 0))) %>%
   ungroup() %>% 
-  complete(Modalidad, Convocatoria = 2015:2024) %>%
-  mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", "KS6",
-                                                "KS7", "KS8", "KS9", "KS10"))) %>% 
+  complete(Modalidad, Comisión, Convocatoria = 2015:2024) %>%
+  mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", 
+                                                "KS6", "KS7", "KS8", "KS9", "KS10"))) %>% 
   
   ggplot(aes(x = Convocatoria, y = Otorgadas, color = Modalidad))+
   geom_line(linewidth = 2)+
   geom_point(size = 5)+
   theme_minimal(base_size = 18)+
   scale_x_continuous(limits = c(2015, 2024), breaks = c(2015:2024))+
-  scale_y_continuous(limits = c(0, 100))+
+  scale_y_continuous(limits = c(0, 80))+
   # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
   ggtitle("Becas doctorales CONICET para las distintas comisiones de KS (serie histórica)")+
-  facet_wrap(~Comisión,ncol = 2)+
+  facet_wrap(~Comisión,ncol = 2, axes = "all")+
   theme_litera_minimal() +
   theme(
     legend.title = element_blank(),
@@ -521,86 +454,14 @@ datos_ks %>%
   
 <div class="scrolling">
 
+
+
+
 ```{r tabla postdoctorales por comision, fig.width=8}
 
-library(DT)
-library(shiny)
 
-df = datos_ks %>% 
-  filter(Escalafon == "Becas postdoctorales") %>% 
-  group_by(Modalidad, Convocatoria, Comisión) %>% 
-  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
-            Postulantes = sum(Postulantes, na.rm = T)) %>% 
-  # mutate_all(~na_if(., 0)) %>%
-    mutate(across(where(is.numeric), ~na_if(., 0))) %>%
-  ungroup() %>% 
-  complete(Modalidad, Convocatoria = 2015:2024) %>%
-  mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", "KS6",
-                                                "KS7", "KS8", "KS9", "KS10"))) %>% 
-  arrange(Comisión) %>% 
-  pivot_wider(id_cols = Comisión, names_from = c(Modalidad,Convocatoria), values_from = "Otorgadas" )
-
-
-Convocatoria <- 2015:2024
-# Crear header con años arriba y TG/TE abajo
-sketch <- withTags(
-  table(
-    class = 'display',
-    thead(
-      tr(
-        th(rowspan = 2, "Comisión"),
-        lapply(Convocatoria, function(a) 
-          th(
-            colspan = 2, 
-            HTML(paste0('<div style="text-align:center"><br>', a, '</div>'))
-          )
-        )
-      ),
-      tr(
-        lapply(rep(c("TG", "TE"), length(Convocatoria)), function(x) 
-          th(HTML(paste0('<div style="text-align:center">', x, '</div>')))
-        )
-      )
-    )
-  )
-)
-
-library(DT)
-library(htmltools)
-
-css <- "
-table.dataTable {
-  font-size: 12px !important;
-}
-"
-
-browsable(
-  tagList(
-    tags$style(HTML(css)),
-    datatable(
-      df,
-      container = sketch,
-      rownames = FALSE,
-      extensions = 'FixedColumns',           # Load FixedColumns extension
-      options = list(
-        scrollY = "400px",
-        scrollX = TRUE,                       # Enable horizontal scrolling
-        fixedColumns = list(leftColumns = 1), # Freeze first column
-        scrollCollapse = TRUE,
-        paging = TRUE,
-        dom = 'ftip',
-        filter = "top",
-        autoWidth = TRUE,
-        columnDefs = list(
-          list(className = 'dt-left', targets = 0),
-          list(className = 'dt-center', targets = 1:(ncol(df)-1))
-        )
-      )
-    )
-  )
-)
-
-
+datos_ks %>% 
+  custom_table("Becas postdoctorales")
   
 
 ```
@@ -611,14 +472,16 @@ browsable(
 ```{r por comision postdoctorales KS, fig.width= 10, fig.height=20}
 
 datos_ks %>% 
+  
+  filter(!is.na(Otorgadas)) %>% 
   filter(Escalafon == "Becas postdoctorales") %>% 
   group_by(Modalidad, Convocatoria, Comisión) %>% 
   summarise(Otorgadas = sum(Otorgadas, na.rm = T),
             Postulantes = sum(Postulantes, na.rm = T)) %>% 
   # mutate_all(~na_if(., 0)) %>%
-    mutate(across(where(is.numeric), ~na_if(., 0))) %>%
+    # mutate(across(where(is.numeric), ~na_if(., 0))) %>%
   ungroup() %>% 
-  complete(Modalidad, Convocatoria = 2015:2024) %>%
+  complete(Modalidad, Comisión, Convocatoria = 2015:2024) %>%
   mutate(Comisión = factor(Comisión, levels = c("KS1", "KS2", "KS3", "KS4", "KS5", "KS6",
                                                 "KS7", "KS8", "KS9", "KS10"))) %>% 
   
@@ -627,10 +490,10 @@ datos_ks %>%
   geom_point(size = 5)+
   theme_minimal(base_size = 18)+
   scale_x_continuous(limits = c(2015, 2024), breaks = c(2015:2024))+
-  scale_y_continuous(limits = c(0, 100))+
+  scale_y_continuous(limits = c(0, 80))+
   # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
   ggtitle("Becas postdoctorales CONICET para las distintas comisiones de KS (serie histórica)")+
-  facet_wrap(~Comisión,ncol = 2)+
+  facet_wrap(~Comisión,ncol = 2, axes = "all")+
   theme_litera_minimal() +
   theme(
     legend.title = element_blank(),
@@ -648,7 +511,8 @@ datos_ks %>%
 
 
 ```
-
+</div>
+</details>
 <br>
 <br>
 

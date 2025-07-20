@@ -86,6 +86,16 @@ ul.task-list li input[type="checkbox"] {
 
 <script src="site_libs/dt-ext-fixedcolumns-1.13.6/js/dataTables.fixedColumns.min.js"></script>
 
+<link href="site_libs/dt-ext-buttons-1.13.6/css/buttons.dataTables.min.css" rel="stylesheet">
+
+<script src="site_libs/dt-ext-buttons-1.13.6/js/dataTables.buttons.min.js"></script>
+
+<script src="site_libs/dt-ext-buttons-1.13.6/js/buttons.html5.min.js"></script>
+
+<script src="site_libs/dt-ext-buttons-1.13.6/js/buttons.colVis.min.js"></script>
+
+<script src="site_libs/dt-ext-buttons-1.13.6/js/buttons.print.min.js"></script>
+
 <link href="site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
 
 <script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
@@ -110,6 +120,14 @@ ul.task-list li input[type="checkbox"] {
   <li class="nav-item">
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./analisis_todas_las_areas.html" aria-current="page"> 
+<span class="menu-text">Análisis general</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./analisis_ks.html"> 
+<span class="menu-text">Análisis sociales y humanidades</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -234,6 +252,8 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>En esta sección, se visualizan los datos de becas doctorales y postdoctorales para el Gran Área de Ciencias Sociales y Humanidades (KS). Es importante tener en cuenta que algunas de las comisiones fueron dividiendose y cambiando su composición a lo largo de los años. Ponemos a disposición los datos con la idea de que quienes quieran hacer otros análisis, o focalizarse en alguna comisión en particular, puedan hacerlo con el menor esfuerzo posible.</p>
+<p>En primer lugar, se presentan los datos agrupados para becas doctorales y postdoctorales. Luego, se muestran desagregados por comisión.</p>
+<p>Es relevante mencionar que los datos de postulantes para becas postdoctorales 2025 son los anunciados como “no otorgados” y probablemente sufran leves cambios cuando el organismo anuncie oficialmente la cantidad de postulantes.</p>
 <p><br> <br></p>
 <details>
 <summary>
@@ -242,7 +262,7 @@ Becas doctorales para todo el gran área
 </h2>
 </summary>
 <div class="scrolling">
-<div class="scrolling">
+<!-- ::: scrolling -->
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -271,7 +291,7 @@ Becas doctorales para todo el gran área
 </div>
 </div>
 </div>
-</div></details>
+</details>
 <p><br> <br></p>
 <details>
 <summary>
@@ -320,12 +340,12 @@ Becas doctorales por comisión
 <div class="cell">
 <div class="cell-output-display">
 <style>
-table.dataTable {
-  font-size: 12px !important;
-}
-</style>
-<div class="datatables html-widget html-fill-item" id="htmlwidget-f61e2e0cc833bce812d6" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-f61e2e0cc833bce812d6">{"x":{"filter":"none","vertical":false,"class":"display","extensions":["FixedColumns"],"data":[["KS1","KS2","KS3","KS4","KS5","KS6","KS7","KS8","KS9","KS10"],[null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null],[6,2,1,11,25,7,11,6,11,null],[5,3,1,9,25,7,12,6,8,null],[7,2,null,6,19,3,13,4,8,null],[12,5,1,6,24,5,23,9,10,null],[5,2,1,5,15,3,3,4,6,3],[4,1,null,4,15,3,2,1,3,4],[2,1,null,3,6,1,1,1,1,2],[19,27,20,31,33,12,26,11,null,null],[21,29,27,50,43,9,27,15,null,null],[15,23,14,29,34,8,14,15,null,null],[11,21,14,27,44,11,21,17,14,null],[21,32,32,40,53,13,30,21,29,null],[38,42,28,37,79,10,42,13,28,null],[24,38,22,26,53,9,31,10,20,null],[25,35,23,39,49,8,16,13,16,17],[14,25,13,27,32,5,9,8,11,13],[14,30,22,28,39,4,10,15,18,14]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th rowspan=\"2\">Comisión<\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2015<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2016<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2017<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2018<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2019<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2020<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2021<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2022<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2023<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2024<\/div><\/th>\n    <\/tr>\n    <tr>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollY":"400px","scrollX":true,"fixedColumns":{"leftColumns":1},"scrollCollapse":true,"paging":true,"dom":"ftip","filter":"top","autoWidth":true,"columnDefs":[{"className":"dt-left","targets":0},{"className":"dt-center","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]},{"name":"Comisión","targets":0},{"name":"Temas estratégicos_2015","targets":1},{"name":"Temas estratégicos_2016","targets":2},{"name":"Temas estratégicos_2017","targets":3},{"name":"Temas estratégicos_2018","targets":4},{"name":"Temas estratégicos_2019","targets":5},{"name":"Temas estratégicos_2020","targets":6},{"name":"Temas estratégicos_2021","targets":7},{"name":"Temas estratégicos_2022","targets":8},{"name":"Temas estratégicos_2023","targets":9},{"name":"Temas estratégicos_2024","targets":10},{"name":"Temas generales_2015","targets":11},{"name":"Temas generales_2016","targets":12},{"name":"Temas generales_2017","targets":13},{"name":"Temas generales_2018","targets":14},{"name":"Temas generales_2019","targets":15},{"name":"Temas generales_2020","targets":16},{"name":"Temas generales_2021","targets":17},{"name":"Temas generales_2022","targets":18},{"name":"Temas generales_2023","targets":19},{"name":"Temas generales_2024","targets":20}],"order":[],"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+  table.dataTable {
+    font-size: 12px !important;
+  }
+  </style>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-21359e8361041904ae7c" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-21359e8361041904ae7c">{"x":{"filter":"none","vertical":false,"class":"display","extensions":["FixedColumns","Buttons"],"data":[["KS1","KS2","KS3","KS4","KS5","KS6","KS7","KS8","KS9","KS10"],[19,27,20,31,33,12,26,11,null,null],[null,null,null,null,null,null,null,null,null,null],[21,29,27,50,43,9,27,15,null,null],[null,null,null,null,null,null,null,null,null,null],[15,23,14,29,34,8,14,15,null,null],[null,null,null,null,null,null,null,null,null,null],[11,21,14,27,44,11,21,17,14,null],[6,2,1,11,25,7,11,6,11,null],[21,32,32,40,53,13,30,21,29,null],[5,3,1,9,25,7,12,6,8,null],[38,42,28,37,79,10,42,13,28,null],[7,2,0,6,19,3,13,4,8,null],[24,38,22,26,53,9,31,10,20,null],[12,5,1,6,24,5,23,9,10,null],[25,35,23,39,49,8,16,13,16,17],[5,2,1,5,15,3,3,4,6,3],[14,25,13,27,32,5,9,8,11,13],[4,1,0,4,15,3,2,1,3,4],[14,30,22,28,39,4,10,15,18,14],[2,1,0,3,6,1,1,1,1,2]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th rowspan=\"2\">Comisión<\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2015<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2016<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2017<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2018<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2019<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2020<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2021<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2022<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2023<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2024<\/div><\/th>\n    <\/tr>\n    <tr>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollY":"400px","scrollX":true,"fixedColumns":{"leftColumns":1},"scrollCollapse":true,"paging":true,"dom":"Bftip","buttons":[{"extend":"csv","text":"Descargar datos"}],"autoWidth":true,"columnDefs":[{"className":"dt-left","targets":0},{"className":"dt-center","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]},{"name":"Comisión","targets":0},{"name":"Temas generales_2015","targets":1},{"name":"Temas estratégicos_2015","targets":2},{"name":"Temas generales_2016","targets":3},{"name":"Temas estratégicos_2016","targets":4},{"name":"Temas generales_2017","targets":5},{"name":"Temas estratégicos_2017","targets":6},{"name":"Temas generales_2018","targets":7},{"name":"Temas estratégicos_2018","targets":8},{"name":"Temas generales_2019","targets":9},{"name":"Temas estratégicos_2019","targets":10},{"name":"Temas generales_2020","targets":11},{"name":"Temas estratégicos_2020","targets":12},{"name":"Temas generales_2021","targets":13},{"name":"Temas estratégicos_2021","targets":14},{"name":"Temas generales_2022","targets":15},{"name":"Temas estratégicos_2022","targets":16},{"name":"Temas generales_2023","targets":17},{"name":"Temas estratégicos_2023","targets":18},{"name":"Temas generales_2024","targets":19},{"name":"Temas estratégicos_2024","targets":20}],"order":[],"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p><br> <br></p>
@@ -351,12 +371,12 @@ Becas postdoctorales por comisión
 <div class="cell">
 <div class="cell-output-display">
 <style>
-table.dataTable {
-  font-size: 12px !important;
-}
-</style>
-<div class="datatables html-widget html-fill-item" id="htmlwidget-31583ea28e8a9e6c3cb2" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-31583ea28e8a9e6c3cb2">{"x":{"filter":"none","vertical":false,"class":"display","extensions":["FixedColumns"],"data":[["KS1","KS2","KS3","KS4","KS5","KS6","KS7","KS8","KS9","KS10"],[null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null],[10,2,1,6,28,4,7,2,8,null],[9,2,null,3,20,3,8,7,10,null],[3,1,null,2,9,1,3,1,4,null],[1,null,1,4,9,1,3,1,2,null],[6,1,null,4,9,4,1,2,4,2],[1,null,null,null,3,1,null,null,1,1],[1,null,null,1,2,1,1,1,1,null],[35,48,41,73,71,23,44,30,null,null],[21,28,20,35,49,8,23,16,null,null],[17,33,22,38,30,9,26,17,null,null],[19,24,15,26,38,9,15,12,9,null],[16,31,26,35,43,14,23,19,11,null],[10,15,16,19,33,5,18,9,12,null],[14,24,16,23,36,6,16,10,15,null],[13,24,22,25,30,6,8,10,14,11],[14,15,9,13,22,4,3,11,8,8],[null,17,10,17,22,5,5,8,8,7]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th rowspan=\"2\">Comisión<\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2015<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2016<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2017<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2018<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2019<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2020<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2021<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2022<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2023<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2024<\/div><\/th>\n    <\/tr>\n    <tr>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollY":"400px","scrollX":true,"fixedColumns":{"leftColumns":1},"scrollCollapse":true,"paging":true,"dom":"ftip","filter":"top","autoWidth":true,"columnDefs":[{"className":"dt-left","targets":0},{"className":"dt-center","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]},{"name":"Comisión","targets":0},{"name":"Temas estratégicos_2015","targets":1},{"name":"Temas estratégicos_2016","targets":2},{"name":"Temas estratégicos_2017","targets":3},{"name":"Temas estratégicos_2018","targets":4},{"name":"Temas estratégicos_2019","targets":5},{"name":"Temas estratégicos_2020","targets":6},{"name":"Temas estratégicos_2021","targets":7},{"name":"Temas estratégicos_2022","targets":8},{"name":"Temas estratégicos_2023","targets":9},{"name":"Temas estratégicos_2024","targets":10},{"name":"Temas generales_2015","targets":11},{"name":"Temas generales_2016","targets":12},{"name":"Temas generales_2017","targets":13},{"name":"Temas generales_2018","targets":14},{"name":"Temas generales_2019","targets":15},{"name":"Temas generales_2020","targets":16},{"name":"Temas generales_2021","targets":17},{"name":"Temas generales_2022","targets":18},{"name":"Temas generales_2024","targets":19},{"name":"Temas generales_2023","targets":20}],"order":[],"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+  table.dataTable {
+    font-size: 12px !important;
+  }
+  </style>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-2c2524bfaa84cddc5b34" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-2c2524bfaa84cddc5b34">{"x":{"filter":"none","vertical":false,"class":"display","extensions":["FixedColumns","Buttons"],"data":[["KS1","KS2","KS3","KS4","KS5","KS6","KS7","KS8","KS9","KS10"],[35,48,41,73,71,23,44,30,null,null],[null,null,null,null,null,null,null,null,null,null],[21,28,20,35,49,8,23,16,null,null],[null,null,null,null,null,null,null,null,null,null],[17,33,22,38,30,9,26,17,null,null],[null,null,null,null,null,null,null,null,null,null],[19,24,15,26,38,9,15,12,9,null],[10,2,1,6,28,4,7,2,8,null],[16,31,26,35,43,14,23,19,11,null],[9,2,0,3,20,3,8,7,10,null],[10,15,16,19,33,5,18,9,12,null],[3,1,0,2,9,1,3,1,4,null],[14,24,16,23,36,6,16,10,15,null],[1,0,1,4,9,1,3,1,2,null],[13,24,22,25,30,6,8,10,14,11],[6,1,0,4,9,4,1,2,4,2],[8,17,10,17,22,5,5,8,8,7],[1,0,0,0,3,1,0,0,1,1],[6,15,9,13,22,4,3,11,8,8],[1,0,0,1,2,1,1,1,1,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th rowspan=\"2\">Comisión<\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2015<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2016<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2017<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2018<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2019<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2020<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2021<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2022<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2023<\/div><\/th>\n      <th colspan=\"2\"><div style=\"text-align:center\"><br>2024<\/div><\/th>\n    <\/tr>\n    <tr>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n      <th><div style=\"text-align:center\">TG<\/div><\/th>\n      <th><div style=\"text-align:center\">TE<\/div><\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollY":"400px","scrollX":true,"fixedColumns":{"leftColumns":1},"scrollCollapse":true,"paging":true,"dom":"Bftip","buttons":[{"extend":"csv","text":"Descargar datos"}],"autoWidth":true,"columnDefs":[{"className":"dt-left","targets":0},{"className":"dt-center","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]},{"name":"Comisión","targets":0},{"name":"Temas generales_2015","targets":1},{"name":"Temas estratégicos_2015","targets":2},{"name":"Temas generales_2016","targets":3},{"name":"Temas estratégicos_2016","targets":4},{"name":"Temas generales_2017","targets":5},{"name":"Temas estratégicos_2017","targets":6},{"name":"Temas generales_2018","targets":7},{"name":"Temas estratégicos_2018","targets":8},{"name":"Temas generales_2019","targets":9},{"name":"Temas estratégicos_2019","targets":10},{"name":"Temas generales_2020","targets":11},{"name":"Temas estratégicos_2020","targets":12},{"name":"Temas generales_2021","targets":13},{"name":"Temas estratégicos_2021","targets":14},{"name":"Temas generales_2022","targets":15},{"name":"Temas estratégicos_2022","targets":16},{"name":"Temas generales_2023","targets":17},{"name":"Temas estratégicos_2023","targets":18},{"name":"Temas generales_2024","targets":19},{"name":"Temas estratégicos_2024","targets":20}],"order":[],"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p><br> <br></p>
@@ -369,14 +389,13 @@ table.dataTable {
 </div>
 </div>
 </div>
+</div>
+</details>
 <p><br> <br></p>
 
 
-</div>
-</details></main></div>
 
-
- <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -797,7 +816,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
- <!-- /content -->
+</div> <!-- /content -->
 
 
 
