@@ -80,12 +80,14 @@ datos_ks %>%
     group_by(Convocatoria) %>% 
     summarise(
       Otorgadas = sum(Otorgadas, na.rm = T),
-      Postulantes = sum(Postulantes, na.rm = T)
-    ) %>%
+      Postulantes_tot = sum(Postulantes, na.rm = T),  # Acá, Postulantes_tot designa a los postulantes reales
+      Postulantes = Postulantes_tot - Otorgadas,      # la Variable Postulantes en realidad es los que no entraron
+    ) %>%                                             # de forma que en el gráfico Otorgadas sea subconjunto de Postulantes
     mutate(
-      Porcentaje = Otorgadas / Postulantes,
+      Porcentaje = Otorgadas / Postulantes_tot,
       Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
     ) %>%
+    select(-Postulantes_tot) %>% 
     pivot_longer(
       cols = c(Otorgadas, Postulantes), 
       names_to = "Estado", 
@@ -129,7 +131,7 @@ datos_ks %>%
     labs(y = "Cantidad", x = "Convocatoria",
          
        caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
-    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 1700), size = 5, alpha = 0.3, hjust = 0.4, color = "Grey40")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 1300), size = 5, alpha = 0.3, hjust = 0.4, color = "Grey40")+
   scale_fill_pastel()
 
 
@@ -143,12 +145,14 @@ datos_ks %>%
     group_by(Convocatoria) %>% 
     summarise(
       Otorgadas = sum(Otorgadas, na.rm = T),
-      Postulantes = sum(Postulantes, na.rm = T)
-    ) %>%
+      Postulantes_tot = sum(Postulantes, na.rm = T),  # Acá, Postulantes_tot designa a los postulantes reales
+      Postulantes = Postulantes_tot - Otorgadas,      # la Variable Postulantes en realidad es los que no entraron
+    ) %>%                                             # de forma que en el gráfico Otorgadas sea subconjunto de Postulantes
     mutate(
-      Porcentaje = Otorgadas / Postulantes,
+      Porcentaje = Otorgadas / Postulantes_tot,
       Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
     ) %>%
+    select(-Postulantes_tot) %>% 
     pivot_longer(
       cols = c(Otorgadas, Postulantes), 
       names_to = "Estado", 
@@ -192,7 +196,7 @@ datos_ks %>%
     labs(y = "Cantidad", x = "Convocatoria", 
          
        caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
-    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 350), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 250), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
   scale_fill_pastel()
 
 
@@ -253,17 +257,22 @@ datos_ks %>%
     filter(Escalafon == "Becas postdoctorales") %>% 
     filter(Modalidad == "Temas generales") %>% 
     group_by(Convocatoria) %>% 
-    summarise(
+      summarise(
       Otorgadas = sum(Otorgadas, na.rm = T),
-      Postulantes = sum(Postulantes, na.rm = T)
-    ) %>%
+      Postulantes_tot = sum(Postulantes, na.rm = T),           # Acá, Postulantes_tot designa a los postulantes reales
+      Postulantes = ifelse(Postulantes_tot != 0,               # la Variable Postulantes en realidad es los que no entraron
+                           Postulantes_tot - Otorgadas,        # de forma que en el gráfico Otorgadas sea subconjunto de Postulantes
+                           NA),      
+    ) %>%                                             
     mutate(
-      Porcentaje = Otorgadas / Postulantes,
+      Porcentaje = Otorgadas / Postulantes_tot,
       # Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
         Porcentaje_label = ifelse(is.finite(Porcentaje),
                             scales::percent(Porcentaje, accuracy = 1),
                             NA_character_)
     ) %>%
+
+    select(-Postulantes_tot) %>% 
     pivot_longer(
       cols = c(Otorgadas, Postulantes), 
       names_to = "Estado", 
@@ -298,7 +307,7 @@ datos_ks %>%
     theme_litera_minimal() +
     theme(
       legend.title = element_blank(),
-      legend.position = c(0.80, 0.80),
+      legend.position = c(0.85, 0.90),
     #   legend.position = "right",
       axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
       axis.title.x = element_text(margin = margin(t = 10)),
@@ -307,7 +316,7 @@ datos_ks %>%
     labs(y = "Cantidad", x = "Convocatoria",
          
        caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
-    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 650), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 450), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
   scale_fill_pastel()
 
 
@@ -319,16 +328,22 @@ datos_ks %>%
     filter(Escalafon == "Becas postdoctorales") %>% 
     filter(Modalidad == "Temas estratégicos") %>% 
     group_by(Convocatoria) %>% 
-    summarise(
+      summarise(
       Otorgadas = sum(Otorgadas, na.rm = T),
-      Postulantes = sum(Postulantes, na.rm = T)
-    ) %>%
+      Postulantes_tot = sum(Postulantes, na.rm = T),           # Acá, Postulantes_tot designa a los postulantes reales
+      Postulantes = ifelse(Postulantes_tot != 0,               # la Variable Postulantes en realidad es los que no entraron
+                           Postulantes_tot - Otorgadas,        # de forma que en el gráfico Otorgadas sea subconjunto de Postulantes
+                           NA),      
+    ) %>%                                             
     mutate(
-      Porcentaje = Otorgadas / Postulantes,
-              Porcentaje_label = ifelse(is.finite(Porcentaje),
+      Porcentaje = Otorgadas / Postulantes_tot,
+      # Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+        Porcentaje_label = ifelse(is.finite(Porcentaje),
                             scales::percent(Porcentaje, accuracy = 1),
                             NA_character_)
     ) %>%
+
+    select(-Postulantes_tot) %>% 
     pivot_longer(
       cols = c(Otorgadas, Postulantes), 
       names_to = "Estado", 
@@ -372,7 +387,7 @@ datos_ks %>%
     labs(y = "Cantidad", x = "Convocatoria",
          
        caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente")+
-    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 170), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
+    geom_text(aes(label = "@fedegiovannetti @fernarso", x = 2019.2, y = 105), size = 5, alpha = 0.2, hjust = 0.4, color = "Grey40")+
   scale_fill_pastel()
 
 
