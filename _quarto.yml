@@ -4,6 +4,7 @@ project:
 
 website:
   # title: "CONICET_serie_historica"
+  google-analytics: "G-LBP73MEE67"
   navbar:
     left:
       - href: index.qmd
