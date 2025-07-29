@@ -13,6 +13,8 @@ website:
         text: Análisis general
       - href: analisis_ks.qmd
         text: Análisis sociales y humanidades
+      - href: analisis_fechas_ingresos.qmd
+        text: Análisis fechas CIC
       # - href: about.qmd
       #   text: Acerca de
     right:
