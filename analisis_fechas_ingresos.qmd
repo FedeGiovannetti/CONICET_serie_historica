@@ -1,0 +1,57 @@
+---
+title: "Análisis general (todas las áreas)"
+---
+
+
+```{r Paquetes y datos, echo=FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+library(readxl)
+source("helper/plot_theming.R")
+
+datos_fechas <- read_excel("data/Fechas convocatorias CIC.xlsx", na = "NA")
+
+
+```
+
+
+En esta sección, se visualiza un análisis muy simple de la cantidad de dias que pasaron entre resultados de convocatorias CIC
+
+
+```{r Becas doctorales, fig.width= 8}
+
+
+datos_fechas %>% 
+  filter(Modalidad == "Temas Generales") %>% 
+  arrange(Modalidad, Convocatoria) %>%
+  group_by(Modalidad) %>%
+  mutate(dias_desde_anterior = as.numeric(Fecha - lag(Fecha))) %>%
+  ungroup() %>% 
+  
+  ggplot(aes(x = Convocatoria, y = dias_desde_anterior, color = Modalidad))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  geom_label(aes(label = format(Fecha, "%b%Y")), 
+            vjust = -1, size = 3.5, show.legend = FALSE, color = "black") +  # <- esta línea agrega las fechas
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2013.5, 2023.5), breaks = c(2014:2023))+
+  scale_y_continuous(limits = c(250,800), breaks = seq(from = 200, 800, by = 100))+
+  ggtitle("Diferencia en días entre la publicación de resultados de\nCIC CONICET y la convocatoria anterior (Temas generales)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Días", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2014.2, y = 800), size = 5, alpha = 0.5, hjust = 0.4, color = "grey")+
+  geom_text(aes(label = "Fecha estimada →\n(aún sin publicar)   ", x = 2021.2, y = 730), size = 4, alpha = 0.5, hjust = 0.4, color = "black")+
+  scale_color_pastel() 
+
+```
+
