@@ -8,10 +8,12 @@ title: "Análisis general (todas las áreas)"
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(readxl)
 source("helper/plot_theming.R")
 
 datos <- read.csv("data/ingresos_totales.csv", fileEncoding = "latin1", sep = ";")
 
+ingresos <- read_excel("data/ingresos_2022.xlsx")
 
 ```
 
@@ -86,3 +88,114 @@ datos %>%
   scale_color_pastel()
 
 ```
+
+
+
+```{r CIC, fig.width= 8}
+
+datos %>% 
+  mutate(TOTAL.ESTRATEGICOS = ifelse(AÑO <= 2012, ))
+  filter(TIPO.CONVOCATORIA == "CIC") %>% 
+  pivot_longer(cols = -c(TIPO.CONVOCATORIA, AÑO),names_to = "Temas", values_to = "Ingresos") %>% 
+  mutate(Temas = case_when(
+    Temas == "TOTAL.ESTRATEGICOS" ~ "Temas estratégicos",
+    Temas == "TOTAL.GENERALES"  ~ "Temas generales"
+  )) %>% 
+  
+  ggplot(aes(x = AÑO, y = Ingresos, color = Temas))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2010, 2022), breaks = c(2010:2022))+
+  ggtitle("Ingresos CONICET (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.9),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Ingresos otorgados", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2011, y = 800), size = 5, alpha = 0.5, hjust = 0.4)+
+  scale_color_pastel()
+
+```
+
+
+```{r ingresos 2022, fig.width= 8}
+
+total_aprobados = sum(ingresos$Aprobados)
+total_postulantes = sum(ingresos$Postulantes)
+
+ingresos %>%    
+    mutate(
+    Rechazados = Postulantes - Aprobados,
+    Porcentaje = Aprobados / Postulantes,
+    # Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+      Porcentaje_label = ifelse(is.finite(Porcentaje),
+                          scales::percent(Porcentaje, accuracy = 1),
+                          NA_character_)
+  ) %>%
+
+    # select(-Postulantes) %>% 
+  pivot_longer(
+      cols = c(Rechazados, Aprobados), 
+      names_to = "Estado", 
+      values_to = "Cantidad"
+    ) %>%
+    # mutate(Estado = factor(Estado, levels = c("Postulantes", "Otorgadas"))) %>% 
+    ggplot(aes(x = Modalidad, y = Cantidad, fill = Estado)) +
+  
+      # Bars for Postulantes
+    geom_bar(
+
+      stat = "identity"
+
+    ) +
+  # Percentage labels above points
+    geom_label(
+      # data = ~ subset(., Estado == "Aprobados"),
+
+      aes(x = Modalidad, y = 1400, label = paste("Aprobados:", Cantidad,"\nPorcentaje:", Porcentaje_label)),
+      vjust = 0.5,
+      size = 4,
+      fill = "white",
+      color = "black"
+    )  +
+  
+    annotate(
+             geom = "label", 
+             label = paste("Total aprobados:", total_aprobados,
+                           "\nTotal Postulantes:", total_postulantes,
+                           "\nPorcentaje:", scales::percent(total_aprobados/total_postulantes,
+                                                            accuracy = 1)),
+           x = -0.2, y = 1400, alpha = 1,
+           )+
+
+
+
+    # scale_x_continuous(limits = c(2018.5, 2024.5), breaks = c(2019:2024))+
+    scale_y_continuous(limits = c(0, 1550), breaks = seq(0, 1100, by = 100))+
+  coord_cartesian(clip = "off")+
+    ggtitle("Ingresos CIC 2022 (postulantes y aprobados)")+
+    theme_litera_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0.50, 0.15),
+    #   legend.position = "right",
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size=14, face="italic", color="black")
+    ) +
+    labs(y = "Cantidad", x = "Convocatoria",
+
+       # caption = "Nota. Los valores faltantes no se encuentran disponibles públicamente"
+       )+
+    geom_text(aes(label = "@fedegiovannetti", x = 0.1, y = 710), size =4, alpha = 0.2, hjust = 0.4, color = "Grey40")+
+  scale_fill_pastel()+
+  coord_flip(clip = "off")
+
+
+```
+
