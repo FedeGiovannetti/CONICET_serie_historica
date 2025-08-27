@@ -1,0 +1,180 @@
+---
+title: "Análisis KS7"
+---
+
+
+```{r Paquetes y datos, echo=FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readxl)
+library(DT)
+library(shiny)
+library(htmltools)
+source("helper/plot_theming.R")
+source("helper/Tables_helper.R")
+
+datos_ks <- read_excel("data/Datos_serie_historica_KS_CONICET.xlsx", na = "NA")
+
+
+```
+
+
+En esta sección, se visualizan los datos de becas doctorales y postdoctorales para el Gran Área de Ciencias Sociales y Humanidades (KS). Es importante tener en cuenta que algunas de las Comisión fueron dividiendose y cambiando su composición a lo largo de los años. Ponemos a disposición los datos con la idea de que quienes quieran hacer otros análisis, o focalizarse en alguna comisión en particular, puedan hacerlo con el menor esfuerzo posible.
+
+En primer lugar, se presentan los datos agrupados para becas doctorales y postdoctorales. Luego, se  muestran desagregados por comisión.
+
+Es relevante mencionar que los datos de postulantes para becas postdoctorales 2025 son los anunciados como "no otorgados" y probablemente sufran leves cambios cuando el organismo anuncie oficialmente la cantidad de postulantes.
+
+<br>
+<br>
+
+<details>
+  <summary><h2>Becas doctorales para todo el gran área</h2></summary>
+  
+<div class="scrolling">
+
+<!-- ::: scrolling -->
+
+```{r}
+
+
+
+plot_Comisión <- function(df, comision, escalafon, modalidad, desde){
+  
+  #### PLOT PRINCIPAL ####
+  
+   df_convocatoria_todas <<-df %>% 
+     filter(Convocatoria >= desde) %>% 
+     filter(Escalafon == escalafon) %>% 
+     filter(Comisión == comision) %>% 
+     
+     filter(Modalidad == modalidad) %>% 
+    group_by(Convocatoria, Comisión) %>% 
+    summarise(
+      Otorgadas = sum(Otorgadas, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T),      
+    ) %>%                                             
+    mutate(
+      Porcentaje = Otorgadas / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) 
+
+  df_convocatoria_todas_long <- df_convocatoria_todas %>% 
+    pivot_longer(
+        cols = c(Otorgadas, Postulantes), 
+        names_to = "Estado", 
+        values_to = "Cantidad"
+      ) %>% 
+    mutate(Estado = factor(Estado, levels = c("Postulantes", "Otorgadas")))
+
+  ggplot() +
+    geom_bar(
+      data = df_convocatoria_todas_long,
+      aes(x = Convocatoria, y = Cantidad, fill = Estado),
+      stat = "identity",
+      position = "dodge"
+    ) +
+  
+  
+    # geom_line(
+    #   data = df_convocatoria_todas,
+    #   aes(x = Convocatoria, y = Porcentaje * max(Postulantes), group = 1),
+    #   size = 1
+    # ) +
+    # geom_point(
+    #   data = df_convocatoria_todas,
+    #   aes(x = Convocatoria, y = Porcentaje * max(Postulantes), group = 1, fill = "Proporción"),
+    #   size = 3
+    # ) +
+  
+  
+    # geom_label(
+    #   data = df_convocatoria_todas,
+    #   aes(x = Convocatoria, y = Porcentaje * max(Postulantes), label = Porcentaje_label),
+    #   vjust = -0.5, size = 5, fill = "white", color = "black"
+    # ) +
+    
+    geom_text(
+      data = df_convocatoria_todas_long,
+      aes(x = Convocatoria, y = Cantidad, label = Cantidad, fill = Estado),  
+      position = position_dodge(width = 0.9), 
+      vjust = -0.5,
+      size = 4
+    )+
+    scale_x_continuous(limits = c(2021.5,2024.5), breaks = c(2022:2024))+
+    
+  
+  
+    scale_y_continuous(
+      name = "Cantidad de personas",
+      # ,
+      # sec.axis = sec_axis(
+      #   ~./max(df_convocatoria_todas$Postulantes),
+      #   name = "Proporción de Otorgadas",
+      #   breaks = seq(0,1, 0.20),
+      #   labels = scales::percent_format(accuracy = 1)
+      #   
+      # )
+    ) +
+    coord_cartesian(ylim = c(0,max(df_convocatoria_todas$Postulantes)*1.1))+
+  
+  
+    scale_fill_manual(
+      name = "Estado",
+      values = c(
+        "Postulantes" = "#A8DADC",
+        "Otorgadas" = "#F4A261"
+        # ,
+        # "Proporción" = "black"
+      )
+    ) +
+  
+  ggtitle(paste(escalafon,
+                " CONICET para la comisión de psicología",
+                # tolower(unique(df_convocatoria_todas$Comisión)),
+                
+                "\n(Postulantes y becas otorgadas)",
+                sep = "")) +
+    labs(y = "Cantidad", x = "Convocatoria") +
+    theme_litera_minimal() +
+    theme(
+        # plot.title.position = "plot",   # título alineado al canvas completo
+  plot.title = element_text(hjust = 0.5),  # hjust = 0.5 → centrado
+      legend.position = c(0.90, 0.90),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size = 14, face = "italic", color = "black")
+    ) -> plot
+  
+
+
+  return(plot)
+      
+  
+}
+
+
+
+
+```
+
+
+```{r total doctorales KS7, fig.width= 8}
+
+plot_Comisión(df = datos_ks, comision = "KS7", escalafon = "Becas doctorales", modalidad = "Temas generales", desde = 2022)
+
+```
+
+```{r total postdoctorales KS7, fig.width= 8}
+
+plot_Comisión(df = datos_ks, comision = "KS7", escalafon = "Becas postdoctorales", modalidad = "Temas generales", desde = 2022)
+
+```
+
+</div>
+</details>
+<br>
+<br>
+
+

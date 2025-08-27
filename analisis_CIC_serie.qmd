@@ -1,0 +1,861 @@
+---
+title: "Análisis Ingresos CIC 2022-2023"
+---
+
+
+```{r Paquetes y datos, echo=FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readxl)
+library(DT)
+library(shiny)
+library(htmltools)
+library(grid)
+library(cowplot)
+library(png)
+source("helper/plot_theming.R")
+source("helper/Tables_helper.R")
+
+datos_CIC <- read_excel("data/Ingresos CIC serie comisiones.xlsx", na = "NA")
+datos_CIC_modalidades <- read_excel("data/ingresos_2022_2023.xlsx", na = "NA")
+
+logo_ATE <- readPNG("Logo_ATECONICET_cuadrado.png")
+g <- rasterGrob(logo_ATE, interpolate = TRUE)
+
+```
+
+
+
+
+
+
+# 1. Análisis generales
+
+```{r función plot postulantes e ingresos x convocatoria para todas las modalidades}
+
+Plot_convocatoria_todas <- function(df, titulo){
+  
+  #### PLOT PRINCIPAL ####
+  
+   df_convocatoria_todas <-df %>% 
+    group_by(Convocatoria) %>% 
+    summarise(
+      Ingresos = sum(Ingresos, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T),      
+    ) %>%                                             
+    mutate(
+      Porcentaje = Ingresos / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) %>% 
+  ungroup() %>% 
+  mutate(Caida_postulantes = diff(Postulantes)/max(Postulantes),
+         Caida_ingresos = diff(Ingresos)/max(Ingresos))
+
+  df_convocatoria_todas_long <- df_convocatoria_todas %>% 
+    pivot_longer(
+        cols = c(Ingresos, Postulantes), 
+        names_to = "Estado", 
+        values_to = "Cantidad"
+      ) %>% 
+    mutate(Estado = factor(Estado, levels = c("Postulantes", "Ingresos")))
+
+  ggplot() +
+    geom_bar(
+      data = df_convocatoria_todas_long,
+      aes(x = Convocatoria, y = Cantidad, fill = Estado),
+      stat = "identity",
+      position = "dodge"
+    ) +
+  
+  
+    geom_line(
+      data = df_convocatoria_todas,
+      aes(x = Convocatoria, y = Porcentaje * max(Postulantes), group = 1),
+      size = 1
+    ) +
+    geom_point(
+      data = df_convocatoria_todas,
+      aes(x = Convocatoria, y = Porcentaje * max(Postulantes), group = 1, fill = "Proporción"),
+      size = 3
+    ) +
+  
+  
+    geom_label(
+      data = df_convocatoria_todas,
+      aes(x = Convocatoria, y = Porcentaje * max(Postulantes), label = Porcentaje_label),
+      vjust = -0.5, size = 5, fill = "white", color = "black"
+    ) +
+    
+    geom_text(
+      data = df_convocatoria_todas_long,
+      aes(x = Convocatoria, y = Cantidad, label = Cantidad, fill = Estado),  
+      position = position_dodge(width = 0.9), 
+      vjust = -0.5,
+      size = 4
+    )+
+     annotation_custom(
+    g,
+    xmin = 2, xmax = 2.5,   # ocupa todo el ancho
+    ymin = 1200, ymax = 2200    # ocupa todo el alto
+  )+
+  
+  
+    scale_y_continuous(
+      name = "Cantidad de personas",
+      sec.axis = sec_axis(
+        ~./max(df_convocatoria_todas$Postulantes),
+        name = "Proporción de ingresos",
+        breaks = seq(0,1, 0.20),
+        labels = scales::percent_format(accuracy = 1)
+        
+      )
+    ) +
+    coord_cartesian(ylim = c(0,max(df_convocatoria_todas$Postulantes)*1.05))+
+  
+  
+    scale_fill_manual(
+      name = "Estado",
+      values = c(
+        "Postulantes" = "#A8DADC",
+        "Ingresos" = "#F4A261",
+        "Proporción" = "black"
+      )
+    ) +
+  
+    # ggtitle("Ingresos CIC CONICET para temas generales, estratégicos,\n fortalecimiento,y temas especiales(serie histórica postulantes y Ingresos)") +
+    labs(y = "Cantidad", x = "Convocatoria") +
+    theme_litera_minimal() +
+    theme(
+        plot.title.position = "plot",   # título alineado al canvas completo
+  plot.title = element_text(hjust = 0.5),  # hjust = 0.5 → centrado
+      legend.position = c(0.90, 0.90),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size = 14, face = "italic", color = "black")
+    ) -> columna_izquierda
+  
+
+
+    box_plot_postulantes <- ggplot() +
+      annotate(
+        "label", x = 0, y = -0.5,
+        label = paste("Caida en\npostulantes\n", scales::percent(df_convocatoria_todas$Caida_postulantes, 
+                                                              accuracy = 1)),
+        size = 6,
+        fontface = "bold",
+        label.size = 1,     # border thickness
+        label.r = unit(0.2, "lines"), # corner roundness
+        fill = "#A8DADC",     # background
+        colour = "white"    # border color
+      ) +
+      xlim(-1, 1) + ylim(-1.5, 1) +   # give some space
+      theme_void()
+    
+    box_plot_ingresos <- ggplot() +
+      annotate(
+        "label", x = 0, y = 0.5,
+        label = paste("Caida en\n  ingresos  \n", scales::percent(df_convocatoria_todas$Caida_ingresos, 
+                                                              accuracy = 1)),
+        size = 6,
+        fontface = "bold",
+        label.size = 1,     # border thickness
+        label.r = unit(0.2, "lines"), # corner roundness
+        fill = "#F4A261",     # background
+        colour = "white"    # border color
+      ) +
+      xlim(-1, 1) + ylim(-1, 1) +   # give some space
+      theme_void()
+    
+    # plot_grid(p, box_plot_postulantes, box_plot_ingresos, ncol = 2, rel_widths = c(3, 1))
+    
+    # Apilar las dos cajas en una sola columna
+    columna_derecha <- plot_grid(box_plot_postulantes, box_plot_ingresos, ncol = 1, rel_heights = c(1, 1), axis = "tb", align = "v")
+    
+    # Quitar leyenda del gráfico principal
+columna_izquierda_sin_leyenda <- columna_izquierda + theme(legend.position = "none")
+    
+    
+  # Extraer la leyenda del gráfico principal
+  legend <- get_legend(
+    columna_izquierda + theme(legend.position = "bottom")
+  )
+
+  # Combinar gráfico + cajas
+  final_plot <- plot_grid(columna_izquierda_sin_leyenda, columna_derecha, ncol = 2, rel_widths = c(3,1))
+
+  # Título global
+  titulo <- ggdraw() +
+    draw_label(
+      titulo,
+      fontface = "bold",
+      size = 15,
+      x = 0.5, y = 0.5,
+      hjust = 0.5
+    )
+
+  # Combinar todo: título arriba, gráfico + cajas, leyenda abajo
+  final_plot_con_titulo_y_leyenda <- plot_grid(
+    titulo,
+    final_plot,
+    legend,
+    ncol = 1,
+    rel_heights = c(0.20, 1, 0.1)
+  )
+
+  return(final_plot_con_titulo_y_leyenda)
+      
+  
+}
+
+
+
+```
+
+## 1.1. Postulantes e ingresos para todas las modalidades (2022 vs. 2023)
+
+```{r Total Temas generales, estratégicos, fortalecimiento y especiales, fig.height= 5, fig.width= 8}
+(
+grafico_1 <- datos_CIC_modalidades %>% 
+  Plot_convocatoria_todas("Gráfico 1. Ingresos CIC CONICET para temas generales, estratégicos,\nespeciales y fortalecimiento (todas las grandes áreas)"))
+
+ggsave(filename = "Grafico_01.jpg", plot = grafico_1, width = 8, height = 5)
+
+
+
+```
+
+
+
+```{r funcion Ingresos y postulantes por modalidad, fig.width= 10, fig.height=6}
+
+df_Modalidad_todas <- datos_CIC_modalidades %>% 
+  filter(Modalidad != "Exterior") %>% 
+    group_by(Modalidad, Convocatoria) %>% 
+    summarise(
+      Ingresos = sum(Ingresos, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T),      
+    ) %>%                                             
+    mutate(
+      Porcentaje = Ingresos / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) %>% 
+  ungroup() 
+
+  df_Modalidad_todas_long <- df_Modalidad_todas %>% 
+    pivot_longer(
+        cols = c(Ingresos, Postulantes), 
+        names_to = "Estado", 
+        values_to = "Cantidad"
+      ) %>% 
+    mutate(Estado = factor(Estado, levels = c("Ingresos", "Postulantes")))
+
+(  ggplot() +
+    geom_bar(
+      data = df_Modalidad_todas_long,
+      aes(x = Modalidad, y = Cantidad, fill = Estado),
+      stat = "identity",
+      position = "dodge"
+    ) +
+  
+  
+    geom_line(
+      data = df_Modalidad_todas,
+      aes(x = Modalidad, y = Porcentaje * max(Postulantes), group = 1),
+      size = 1
+    ) +
+    geom_point(
+      data = df_Modalidad_todas,
+      aes(x = Modalidad, y = Porcentaje * max(Postulantes), group = 1, fill = "Proporción"),
+      size = 3
+    ) +
+  
+  
+    geom_label(
+      data = df_Modalidad_todas,
+      aes(x = Modalidad, y = Porcentaje * max(Postulantes), label = Porcentaje_label),
+      # vjust = -0.5,
+      hjust = -0.5,
+      size = 5, fill = "white", color = "black"
+    ) +
+    
+    geom_text(
+      data = df_Modalidad_todas_long,
+      aes(x = Modalidad, y = -20, label = Cantidad, fill = Estado),  
+      position = position_dodge(width = 0.9), 
+      hjust = -0.5,
+      size = 4
+    )+
+    
+  
+  
+    scale_y_continuous(
+      name = "Cantidad de personas",
+      sec.axis = sec_axis(
+        ~./max(df_Modalidad_todas$Postulantes),
+        name = "Proporción de ingresos",
+        breaks = seq(0,1, 0.20),
+        labels = scales::percent_format(accuracy = 1)
+        
+      )
+    ) +
+    coord_cartesian(ylim = c(0,max(df_Modalidad_todas$Postulantes)*1.05))+
+  
+  
+    scale_fill_manual(
+      name = "Estado",
+      values = c(
+        "Postulantes" = "#A8DADC",
+        "Ingresos" = "#F4A261",
+        "Proporción" = "black"
+      ),
+  breaks = c("Postulantes", "Ingresos", "Proporción")
+    ) +
+      ggtitle(paste("Gráfico 2. Ingresos y postulaciones CIC CONICET para\ntodos los temas",
+                "en convocatorias 2022 y 2023")) +
+  
+    labs(y = "Cantidad", x = "Modalidad") +
+    theme_litera_minimal() +
+    theme(
+        plot.title.position = "plot",   # título alineado al canvas completo
+  plot.title = element_text(hjust = 0.5),  # hjust = 0.5 → centrado
+      legend.position = c(0.90, 0.10),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size = 14, face = "italic", color = "black")
+    ) +
+    
+  coord_flip()+
+    facet_wrap(~ Convocatoria) +
+         annotation_custom(
+    g,
+    xmin = 2, xmax = 3.2,   # ocupa todo el ancho
+    ymin = 600, ymax = 1400    # ocupa todo el alto
+  )-> grafico_2)
+  
+
+
+ggsave(filename = "Grafico_02.jpg", plot = grafico_2, width = 10, height = 6)
+
+
+```
+
+
+
+
+## 1.2. Postulantes e ingresos para temas generales (2022 vs. 2023)
+
+```{r Total Temas generales, fig.width= 8}
+
+datos_CIC_modalidades %>% 
+  filter(Modalidad == "Temas generales") %>% 
+  Plot_convocatoria_todas("Ingresos CIC CONICET para temas generales (todas las grandes áreas)")
+
+
+```
+
+## 1.3. Postulantes e ingresos para temas generales KS (2022 vs. 2023)
+
+```{r Total Sociales y humanidades, fig.width= 8}
+
+datos_CIC %>% 
+  filter(Gran.area == "Sociales y humanidades") %>% 
+  # filter(Modalidad == "Temas generales") %>% 
+  Plot_convocatoria_todas("Ingresos CIC CONICET para temas generales\n(Ciencias Sociales y Humanidades)")
+
+```
+
+```{r}
+
+datos_CIC %>% 
+  group_by(Gran.area, Convocatoria) %>% 
+  summarise(Postulantes = sum(Postulantes)) %>% 
+  na.omit() %>% 
+  group_by(Convocatoria) %>% 
+  mutate(total = sum(Postulantes)) %>% 
+  mutate(proporcion = (Postulantes/total)*100) %>% 
+  filter(Gran.area == "Sociales y humanidades")
+
+
+datos_CIC %>% 
+  group_by(Gran.area, Convocatoria) %>% 
+  summarise(Ingresos = sum(Ingresos)) %>% 
+  na.omit() %>% 
+  group_by(Convocatoria) %>% 
+  mutate(total = sum(Ingresos)) %>% 
+  mutate(proporcion = (Ingresos/total)*100) %>% 
+  filter(Gran.area == "Sociales y humanidades")
+
+```
+
+
+# 2. Grandes Áreas
+
+## 2.1. Proporción de ingresos para las Grandes Áreas (Temas generales)
+
+```{r Caida porcentaje por gran área, fig.width= 8, fig.height=5}
+
+
+datos_CIC_gran_area_diferencia <- datos_CIC %>% 
+  group_by(Convocatoria, Gran.area) %>% 
+  summarise(
+    Ingresos = sum(Ingresos, na.rm = TRUE),
+    Postulantes = sum(Postulantes, na.rm = TRUE)
+  ) %>%                                             
+  mutate(
+    Porcentaje = (Ingresos / Postulantes)*100
+  ) %>% 
+  select(Gran.area, Convocatoria, Porcentaje) %>% 
+  pivot_wider(
+      names_from = "Convocatoria",
+      values_from = "Porcentaje") %>% 
+  
+  na.omit() %>% 
+  mutate(
+    Caida = ((`CIC 2022` - `CIC 2023`) / `CIC 2022`)  # cambio relativo
+  ) %>% 
+  pivot_longer(
+    cols = -c(Gran.area, Caida),
+    names_to = "Convocatoria",
+    values_to = "Porcentaje"
+  ) %>%
+  mutate(Caida_perc = Caida*100,
+         Caida_label = scales::percent(Caida, accuracy = 1)) %>% 
+  mutate(Convocatoria = factor(Convocatoria, levels = c("CIC 2023", "CIC 2022")))
+  
+
+
+(ggplot(
+    data = datos_CIC_gran_area_diferencia) +
+  geom_bar(
+    aes(x = reorder(Gran.area, Caida_perc), y = Porcentaje, fill = Convocatoria),
+    stat = "identity",
+    position = "dodge"
+  ) +
+
+
+  geom_text(
+    # data = datos_CIC_gran_area_long,
+    aes(x = Gran.area, y = 0.1, label = paste(round(Porcentaje, digits = 2), "%"), fill = Convocatoria),
+    position = position_dodge2(width = 1, preserve = "single"),
+    hjust = -0.0,  
+    size = 4
+  )+
+
+
+  scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30))+
+
+  scale_fill_pastel(start = 10, guide = guide_legend(reverse = TRUE))+
+
+  ggtitle(paste("Grafico 3. Proporción de ingresos CIC CONICET para\ntemas generales",
+                "en convocatorias 2022 y 2023")) +
+  labs(y = "Proporción", x = "Gran Área") +
+  theme_litera_minimal() +
+  theme(
+  plot.title.position = "plot",   # título alineado al canvas completo
+  plot.title = element_text(hjust = 0.5),  # hjust = 0.5 → centrado
+    legend.position = c(0.85, 0.9),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size = 14, face = "italic", color = "black")
+  )+
+  annotation_custom(
+    g,
+    xmin = 1.5, xmax = 2.7,   # ocupa todo el ancho
+    ymin = 40, ymax = 60) +   # ocupa todo el alto
+    
+  coord_flip() -> grafico3)
+
+
+
+ggsave(filename = "Grafico_03.jpg", plot = grafico3, width = 8, height = 4)
+
+```
+
+# 3. Por comisión
+
+```{r funcion plot comisiones separadas, fig.width= 10}
+
+plot_comisiones_ingresos <- function(convocatoria,gran.area){
+  
+   datos_CIC_comision = datos_CIC %>% 
+  filter(Convocatoria == convocatoria) %>% 
+  filter(Gran.area == gran.area) %>% 
+    group_by(Gran.area, Comisiones) %>% 
+    summarise(
+      Ingresos = sum(Ingresos, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T),      
+    ) %>%                                             
+    mutate(
+      Porcentaje = Ingresos / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) 
+
+datos_CIC_comision_long <- datos_CIC_comision %>% 
+  pivot_longer(
+      cols = c(Ingresos, Postulantes), 
+      names_to = "Estado", 
+      values_to = "Cantidad"
+    ) %>% 
+  mutate(Estado = factor(Estado, levels = c("Ingresos","Postulantes")))
+
+ggplot() +
+  geom_bar(
+    data = datos_CIC_comision_long,
+    aes(x = reorder(Comisiones, Porcentaje), y = Cantidad, fill = Estado),
+    stat = "identity",
+    position = "dodge"
+  ) +
+
+
+  geom_line(
+    data = datos_CIC_comision,
+    aes(x = Comisiones, y = Porcentaje * max(Postulantes), group = 1),
+    size = 1
+  ) +
+  geom_point(
+    data = datos_CIC_comision,
+    aes(x = Comisiones, y = Porcentaje * max(Postulantes), group = 1, fill = "Proporción"),
+    size = 3
+  ) +
+
+
+  geom_label(
+    data = datos_CIC_comision,
+    aes(x = Comisiones, y = Porcentaje * max(Postulantes), label = Porcentaje_label),
+    hjust = -0.5,
+    size = 4, fill = "white", color = "black"
+  ) +
+
+geom_text(
+  data = datos_CIC_comision_long,
+  aes(x = Comisiones, y = 0.1, label = Cantidad, fill = Estado),
+  position = position_dodge2(width = 1, preserve = "single"),
+  hjust = -0.0,   # ajusta si usás coord_flip()
+  # vjust = -0.1,
+  size = 4
+)+
+
+
+
+
+  scale_y_continuous(
+    name = "Cantidad de personas",
+    sec.axis = sec_axis(
+      ~./max(datos_CIC_comision$Postulantes),
+      name = "Proporción de ingresos",
+      breaks = seq(0,1, 0.20),
+      labels = scales::percent_format(accuracy = 1)
+
+    )
+  ) +
+
+  coord_cartesian(ylim = c(0,1200))+
+  scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30))+
+
+  scale_fill_manual(
+    name = "Estado",
+    values = c(
+      "Postulantes" = "#A8DADC",
+      "Ingresos" = "#F4A261",
+      "Proporción" = "black"
+    ),
+    guide = guide_legend(reverse = TRUE)
+  ) +
+
+  ggtitle(paste("Ingresos CIC CONICET para temas generales ",
+                "Convocatoria ",
+                convocatoria,
+                "\nGran Área de ",
+                gran.area,
+                sep = "")) +
+  labs(y = "Cantidad", x = "Convocatoria") +
+  theme_litera_minimal() +
+  theme(
+  plot.title.position = "plot",   # título alineado al canvas completo
+  plot.title = element_text(hjust = 0.5),  # hjust = 0.5 → centrado
+    legend.position = c(0.85, 0.88),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size = 14, face = "italic", color = "black")
+  )+
+    
+  coord_flip()
+}
+
+
+
+```
+
+## 3.1. Sociales y humanidades
+
+```{r Sociales y humanidades, fig.width= 10, fig.heigth = 8}
+
+plot_comisiones_ingresos(convocatoria = "CIC 2022", gran.area = "Sociales y humanidades")
+
+plot_comisiones_ingresos(convocatoria = "CIC 2023", gran.area = "Sociales y humanidades")
+
+```
+
+## 3.2. Ciencias Biológicas y de la Salud
+
+```{r Ciencias Biológicas y de la Salud, fig.width= 10, fig.heigth = 8}
+
+plot_comisiones_ingresos(convocatoria = "CIC 2022", gran.area = "Ciencias Biológicas y de la Salud")
+
+plot_comisiones_ingresos(convocatoria = "CIC 2023", gran.area = "Ciencias Biológicas y de la Salud")
+
+
+```
+
+## 3.3. Ciencias agrarias, de las ingenierías y de los materiales
+
+```{r Ciencias agrarias, de las ingenierías y de los materiales, fig.width= 10, fig.heigth = 8}
+
+plot_comisiones_ingresos(convocatoria = "CIC 2022", gran.area = "Ciencias agrarias, de las ingenierías y de los materiales")
+
+plot_comisiones_ingresos(convocatoria = "CIC 2023", gran.area = "Ciencias agrarias, de las ingenierías y de los materiales")
+
+
+```
+
+
+## 3.4. Ciencias Exactas y Naturales
+
+
+```{r Ciencias Exactas y Naturales, fig.width= 10, fig.heigth = 8}
+
+plot_comisiones_ingresos(convocatoria = "CIC 2022", gran.area = "Ciencias Exactas y Naturales")
+plot_comisiones_ingresos(convocatoria = "CIC 2023", gran.area = "Ciencias Exactas y Naturales")
+
+```
+
+
+```{r}
+
+plot_comision <- function(comision){
+  
+   datos_CIC_comision = datos_CIC %>% 
+  # filter(Convocatoria == convocatoria) %>% 
+  filter(Codigo.comisiones == comision) %>% 
+    group_by(Comisiones, Convocatoria) %>% 
+    summarise(
+      Ingresos = sum(Ingresos, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T),      
+    ) %>%                                             
+    mutate(
+      Porcentaje = Ingresos / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) 
+
+datos_CIC_comision_long <- datos_CIC_comision %>% 
+  pivot_longer(
+      cols = c(Ingresos, Postulantes), 
+      names_to = "Estado", 
+      values_to = "Cantidad"
+    ) %>% 
+  mutate(Estado = factor(Estado, levels = c("Ingresos","Postulantes")))
+
+ggplot() +
+  geom_bar(
+    data = datos_CIC_comision_long,
+    aes(x = reorder(Convocatoria, Porcentaje), y = Cantidad, fill = Estado),
+    stat = "identity",
+    position = "dodge"
+  ) +
+
+
+  geom_line(
+    data = datos_CIC_comision,
+    aes(x = Convocatoria, y = Porcentaje * max(Postulantes), group = 1),
+    size = 1
+  ) +
+  geom_point(
+    data = datos_CIC_comision,
+    aes(x = Convocatoria, y = Porcentaje * max(Postulantes), group = 1, fill = "Proporción"),
+    size = 3
+  ) +
+
+
+  geom_label(
+    data = datos_CIC_comision,
+    aes(x = Convocatoria, y = Porcentaje * max(Postulantes), label = Porcentaje_label),
+    hjust = -0.5,
+    size = 4, fill = "white", color = "black"
+  ) +
+
+geom_text(
+  data = datos_CIC_comision_long,
+  aes(x = Convocatoria, y = 0.1, label = Cantidad, fill = Estado),
+  position = position_dodge2(width = 1, preserve = "single"),
+  # hjust = -0.0,   # ajusta si usás coord_flip()
+  vjust = -0.5,
+  size = 4
+)+
+
+
+
+
+  scale_y_continuous(
+    name = "Cantidad de personas",
+    sec.axis = sec_axis(
+      ~./max(datos_CIC_comision$Postulantes),
+      name = "Proporción de ingresos",
+      breaks = seq(0,1, 0.20),
+      labels = scales::percent_format(accuracy = 1)
+
+    )
+  ) +
+
+  coord_cartesian(ylim = c(0,30))+
+  scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30))+
+
+  scale_fill_manual(
+    name = "Estado",
+    values = c(
+      "Postulantes" = "#A8DADC",
+      "Ingresos" = "#F4A261",
+      "Proporción" = "black"
+    ),
+    guide = guide_legend(reverse = TRUE)
+  ) +
+
+  ggtitle(paste("Ingresos CIC CONICET para temas generales ",
+                "Convocatoria ",
+                # convocatoria,
+                # "\nGran Área de ",
+                comision,
+                sep = "")) +
+  labs(y = "Cantidad", x = "Convocatoria") +
+  theme_litera_minimal() +
+  theme(
+  plot.title.position = "plot",   # título alineado al canvas completo
+  plot.title = element_text(hjust = 0.5),  # hjust = 0.5 → centrado
+    legend.position = c(0.85, 0.88),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size = 14, face = "italic", color = "black")
+  )
+}
+
+
+plot_comision(comision = "KS7")
+
+```
+
+
+
+
+```{r función plot postulantes e ingresos para comisión}
+
+plot_comision <- function(df, comision){
+  
+  #### PLOT PRINCIPAL ####
+  
+   df_convocatoria_todas <<-df %>% 
+     filter(Codigo.comisiones == comision) %>% 
+    group_by(Convocatoria, Comisiones) %>% 
+    summarise(
+      Ingresos = sum(Ingresos, na.rm = T),
+      Postulantes = sum(Postulantes, na.rm = T),      
+    ) %>%                                             
+    mutate(
+      Porcentaje = Ingresos / Postulantes,
+      Porcentaje_label = scales::percent(Porcentaje, accuracy = 1)
+    ) %>% 
+  ungroup() %>% 
+  mutate(Caida_postulantes = diff(Postulantes)/max(Postulantes),
+         Caida_ingresos = diff(Ingresos)/max(Ingresos))
+
+  df_convocatoria_todas_long <- df_convocatoria_todas %>% 
+    pivot_longer(
+        cols = c(Ingresos, Postulantes), 
+        names_to = "Estado", 
+        values_to = "Cantidad"
+      ) %>% 
+    mutate(Estado = factor(Estado, levels = c("Postulantes", "Ingresos")))
+
+  ggplot() +
+    geom_bar(
+      data = df_convocatoria_todas_long,
+      aes(x = Convocatoria, y = Cantidad, fill = Estado),
+      stat = "identity",
+      position = "dodge"
+    ) +
+  
+  
+    geom_line(
+      data = df_convocatoria_todas,
+      aes(x = Convocatoria, y = Porcentaje * max(Postulantes), group = 1),
+      size = 1
+    ) +
+    geom_point(
+      data = df_convocatoria_todas,
+      aes(x = Convocatoria, y = Porcentaje * max(Postulantes), group = 1, fill = "Proporción"),
+      size = 3
+    ) +
+  
+  
+    geom_label(
+      data = df_convocatoria_todas,
+      aes(x = Convocatoria, y = Porcentaje * max(Postulantes), label = Porcentaje_label),
+      vjust = -0.5, size = 5, fill = "white", color = "black"
+    ) +
+    
+    geom_text(
+      data = df_convocatoria_todas_long,
+      aes(x = Convocatoria, y = Cantidad, label = Cantidad, fill = Estado),  
+      position = position_dodge(width = 0.9), 
+      vjust = -0.5,
+      size = 4
+    )+
+    
+  
+  
+    scale_y_continuous(
+      name = "Cantidad de personas",
+      sec.axis = sec_axis(
+        ~./max(df_convocatoria_todas$Postulantes),
+        name = "Proporción de ingresos",
+        breaks = seq(0,1, 0.20),
+        labels = scales::percent_format(accuracy = 1)
+        
+      )
+    ) +
+    coord_cartesian(ylim = c(0,max(df_convocatoria_todas$Postulantes)*1.05))+
+  
+  
+    scale_fill_manual(
+      name = "Estado",
+      values = c(
+        "Postulantes" = "#A8DADC",
+        "Ingresos" = "#F4A261",
+        "Proporción" = "black"
+      )
+    ) +
+  
+  ggtitle(paste("Ingresos CIC CONICET para la comisión de ",
+                tolower(unique(df_convocatoria_todas$Comisiones)),
+                "\nen las convocatorias 2022 y 2023",
+                sep = "")) +
+    labs(y = "Cantidad", x = "Convocatoria") +
+    theme_litera_minimal() +
+    theme(
+        plot.title.position = "plot",   # título alineado al canvas completo
+  plot.title = element_text(hjust = 0.5),  # hjust = 0.5 → centrado
+      legend.position = c(0.90, 0.90),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size = 14, face = "italic", color = "black")
+    ) -> plot
+  
+
+
+  return(plot)
+      
+  
+}
+
+
+
+plot_comision(df = datos_CIC, comision = "KS7")
+
+
+```
+
+
