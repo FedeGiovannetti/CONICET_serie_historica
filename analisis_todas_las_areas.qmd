@@ -17,8 +17,46 @@ ingresos <- read_excel("data/ingresos_2022.xlsx")
 
 ```
 
-
 En esta sección, se visualizan los datos de becas doctorales y postdoctorales sin agrupar por Gran Área.
+
+<br>
+<br>
+
+
+```{r Becas doctorales total, fig.width= 8}
+
+datos %>% 
+  filter(TIPO.CONVOCATORIA == "BECA DOCTORAL") %>% 
+  rowwise() %>% 
+  mutate(becas = sum(TOTAL.GENERALES + TOTAL.ESTRATEGICOS)) %>% 
+  
+  ggplot(aes(x = AÑO, y = becas))+
+  geom_line(linewidth = 1.5)+
+  geom_point(size = 4)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2010, 2025), breaks = c(2010:2025))+
+  # scale_y_continuous(limits = c(300, 1300), breaks = seq(300,1300, by = 100))+
+  ggtitle("Becas doctorales CONICET (serie histórica)")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.9),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2011, y = 1550), size = 4, alpha = 0.3, hjust = 0.4)+
+  
+  geom_text(aes(label = "*Convocatorias a temas abiertos,\ntemas generales y temas estratégicos.\nSe omiten becas cofinanciadas",
+                x = 2010, y = 800), size = 4, alpha = 0.3, hjust = 0, vjust = 0)+
+  scale_color_pastel()
+
+```
+
+En esta sección, se visualizan los datos de becas doctorales y postdoctorales sin agrupar por Gran Área, agrupadas por temas generales y estratégicos.
+
+A partir de 2025 la división de temas generales vs. estratégicos dejó de existir por lo que queda pendiente actualizar los gráficos para contener los distintos cambios.
 
 <br>
 <br>

@@ -1,6 +1,13 @@
-
+color_principal <- "#E5989B"
 
 theme_litera_minimal <- function(base_size = 15, base_family = "sans") {
+  
+    # 3. Actualizar defaults de los geoms más usados
+  update_geom_defaults("point", list(colour = color_principal, size = 2))
+  update_geom_defaults("line",  list(colour = color_principal, linewidth = 1))
+  update_geom_defaults("col",   list(fill   = color_principal))
+  update_geom_defaults("area",  list(fill   = color_principal, alpha = 0.8))
+  
   theme_minimal(base_size = base_size, base_family = base_family) +
     theme(
       plot.title = element_text(face = "bold", size = base_size, hjust = 0.5),

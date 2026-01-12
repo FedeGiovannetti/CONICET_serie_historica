@@ -30,10 +30,50 @@ Es relevante mencionar que los datos de postulantes para becas postdoctorales 20
 <br>
 <br>
 
-<details>
-  <summary><h2>Becas doctorales para todo el gran área</h2></summary>
+
+
+
+```{r serie doctorales KS7 zoom 5 años, fig.width= 8}
+
+datos_ks %>% 
+  filter(Escalafon == "Becas doctorales") %>% 
+  filter(Comisión == "KS7") %>% 
+  group_by(Convocatoria) %>% 
+  summarise(Otorgadas = sum(Otorgadas, na.rm = T),
+            Postulantes = sum(Postulantes, na.rm = T)) %>% 
+  mutate_all(~na_if(., 0)) %>%
+  ungroup() %>% 
+  # complete(Convocatoria = 2015:2025) %>%
   
-<div class="scrolling">
+  ggplot(aes(x = Convocatoria, y = Otorgadas))+
+  geom_line(linewidth = 2)+
+  geom_point(size = 5)+
+  theme_minimal(base_size = 18)+
+  scale_x_continuous(limits = c(2022, 2025), breaks = c(2022:2025))+
+  scale_y_continuous(limits = c(5, 25), breaks = seq(5,25, by = 5))+
+  ggtitle("Becas doctorales CONICET para KS7 (Psicología). Serie 2022-2025")+
+  theme_litera_minimal() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.82, 0.8),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.subtitle = element_text(size=14, face="italic", color="black")
+  ) +
+  labs(y = "Becas otorgadas", x = "Convocatoria",
+       
+       caption = "Nota. Se considera sólo desde que psicología es comisión única")+
+  geom_text(aes(label = "@fedegiovannetti", x = 2022, y = 6), size = 5, alpha = 0.2, hjust = 0, color = "grey20")+
+  geom_label(aes(label = Otorgadas), vjust = -1)+
+  scale_color_pastel()
+
+
+```
+<!-- <details> -->
+<!--   <summary><h2>Becas doctorales para todo el gran área</h2></summary> -->
+
+<!-- <div class="scrolling"> -->
+
 
 <!-- ::: scrolling -->
 
