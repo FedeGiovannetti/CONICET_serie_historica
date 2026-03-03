@@ -1,5 +1,5 @@
 ---
-title: "Análisis general (todas las áreas)"
+title: "Análisis genero (todas las áreas y KS7+KS9)"
 ---
 
 
@@ -58,11 +58,6 @@ plot_genero <- function(data, title, ymin, ymax, step, variable, ylab ="Becas ot
 
 
 ```
-
-En esta sección, se visualizan los datos de becas doctorales y postdoctorales sin agrupar por Gran Área.
-
-<br>
-<br>
 
 
 
