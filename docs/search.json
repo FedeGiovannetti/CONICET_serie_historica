@@ -118,5 +118,12 @@
     "title": "Análisis Ingresos CIC 2022-2023",
     "section": "",
     "text": "# A tibble: 2 × 5\n# Groups:   Convocatoria [2]\n  Gran.area              Convocatoria Postulantes total proporcion\n  &lt;chr&gt;                  &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;\n1 Sociales y humanidades CIC 2022             440  1117       39.4\n2 Sociales y humanidades CIC 2023             325   752       43.2\n\n\n# A tibble: 2 × 5\n# Groups:   Convocatoria [2]\n  Gran.area              Convocatoria Ingresos total proporcion\n  &lt;chr&gt;                  &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;\n1 Sociales y humanidades CIC 2022          109   436       25  \n2 Sociales y humanidades CIC 2023           40   210       19.0"
+  },
+  {
+    "objectID": "analisis_genero.html",
+    "href": "analisis_genero.html",
+    "title": "Análisis general (todas las áreas)",
+    "section": "",
+    "text": "En esta sección, se visualizan los datos de becas doctorales y postdoctorales sin agrupar por Gran Área."
   }
 ]
