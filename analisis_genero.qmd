@@ -3,7 +3,7 @@ title: "Análisis genero (todas las áreas y KS7+KS9)"
 ---
 
 
-```{r Paquetes y datos, echo=FALSE}
+```{r Paquetes, funciones y datos, echo=FALSE}
 
 library(dplyr)
 library(ggplot2)
@@ -20,14 +20,15 @@ datos_cic <- read.csv("data/datos_genero_cic.csv")%>%
 
 
 
-plot_genero <- function(data, title, ymin, ymax, step, variable, ylab ="Becas otorgadas"){
+
+plot_genero <- function(data, title, xmin, ymin, ymax, step, variable, ylab ="Becas otorgadas"){
   
   data %>% 
     ggplot(aes(x = convocatoria, y = {{variable}}, color = genero))+
     geom_line(linewidth = 1.5)+
     geom_point(size = 4)+
     theme_minimal(base_size = 18)+
-    scale_x_continuous(limits = c(2015, 2024), breaks = c(2010:2024))+
+    scale_x_continuous(limits = c(xmin, 2024), breaks = c(xmin:2024))+
     scale_y_continuous(limits = c(ymin, ymax), breaks = seq(ymin,ymax, by = step))+
     ggtitle(title)+
     theme_litera_minimal() +
@@ -54,6 +55,42 @@ plot_genero <- function(data, title, ymin, ymax, step, variable, ylab ="Becas ot
   
 }
 
+plot_genero_escalafon <- function(data, ymin ,ymax, step, title, variable, ylab ="Becas otorgadas"){
+  
+  data %>% 
+    ggplot(aes(x = Escalafón, y = {{variable}}, color = Género, group = Género))+
+    geom_line(linewidth = 1.5)+
+    geom_point(size = 4)+
+    theme_minimal(base_size = 18)+
+    # scale_x_continuous(limits = c(xmin, 2024), breaks = c(xmin:2024))+
+    scale_y_continuous(limits = c(ymin, ymax), breaks = seq(ymin,ymax, by = step))+
+    ggtitle(title)+
+    theme_litera_minimal() +
+        geom_label(
+        aes(label = {{variable}}),
+        vjust = -.5,
+        size = 4, fill = "white", color = "black"
+      ) +
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0, 0.9),
+      legend.justification.inside = "left",
+      legend.direction = "horizontal",
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size=14, face="italic", color="black")
+    ) +
+    # labs(y = ylab, x = "Convocatoria")+
+    geom_text(aes(label = "@fedegiovannetti\n@neurotransmitiendo", x = 8, y = 15),
+              size = 4, alpha = 0.3, hjust = 1, vjust = 1, color = "darkgrey")+
+    scale_color_pastel()
+  
+  
+  
+}
+
+
+
 
 
 
@@ -61,7 +98,7 @@ plot_genero <- function(data, title, ymin, ymax, step, variable, ylab ="Becas ot
 
 
 
-
+## Cantidad y porcentaje de becas doctorales otorgadas por género
 
 ```{r Becas doctorales total, fig.width= 8}
 
@@ -78,17 +115,17 @@ doctorales_agrupadas = datos %>%
 
 
 
-  plot_genero(data = doctorales_agrupadas, 
+  plot_genero(data = doctorales_agrupadas, xmin = 2015, 
               ymin = 0, ymax = 1500, step = 100,
               title = "Cantidad de becas doctorales CONICET\notorgadas por género (2015-2024)", variable = frecuencia)
   
   
-    plot_genero(data = doctorales_agrupadas, 
+    plot_genero(data = doctorales_agrupadas, xmin = 2015, 
               ymin = 0, ymax = 100, step = 10,
               title = "Porcentaje de becas doctorales CONICET\notorgadas por género (2015-2024)", variable = porcentaje)
 
 ```
-
+## Cantidad y porcentaje de becas postdoctorales otorgadas por género
 
 
 ```{r Becas postdoctorales total, fig.width= 8}
@@ -96,7 +133,7 @@ doctorales_agrupadas = datos %>%
 postdoctorales_agrupadas = datos %>% 
   filter(resultado == "Otorgado") %>% 
   filter(convocatoria >= 2015) %>%
-  filter(convocatoria < 2025) %>% 
+  filter(convocatoria < 2023) %>% 
   filter(escalafon == "Becas postdoctorales") %>% 
    group_by(convocatoria, genero) %>% 
   summarise(frecuencia = sum(n)) %>% 
@@ -106,75 +143,18 @@ postdoctorales_agrupadas = datos %>%
 
 
 
-  plot_genero(data = postdoctorales_agrupadas, 
+  plot_genero(data = postdoctorales_agrupadas, xmin = 2015,
               ymin = 0, ymax = 1100, step = 100,
               title = "Cantidad de becas postdoctorales CONICET\notorgadas por género (2015-2024)", variable = frecuencia)
   
   
-    plot_genero(data = postdoctorales_agrupadas, 
+    plot_genero(data = postdoctorales_agrupadas, xmin = 2015,
               ymin = 0, ymax = 100, step = 10,
               title = "Porcentaje de becas postdoctorales CONICET\notorgadas por género (2015-2024)", variable = porcentaje)
 
 ```
 
-```{r Becas doctorales ks7 y Ks9, fig.width= 8}
-
-doctorales_agrupadas_psi = datos %>% 
-  filter(resultado == "Otorgado") %>% 
-  
-  filter(disciplina_codigo %in% c("KS7", "KS9")) %>% 
-  filter(convocatoria >= 2015) %>%
-  filter(convocatoria < 2025) %>% 
-  filter(escalafon == "Becas doctorales") %>% 
-   group_by(convocatoria, genero) %>% 
-  summarise(frecuencia = sum(n)) %>% 
-  group_by(convocatoria) %>% 
-  mutate(total = sum(frecuencia),
-         porcentaje = round(frecuencia/total*100, digits = 2)) 
-
-
-
-  plot_genero(data = doctorales_agrupadas_psi, 
-              ymin = 0, ymax = 100, step = 10,
-              title = "Cantidad de becas doctorales CONICET\notorgadas por género (2015-2024)\n para la comisión de psicología y ciencias de la educación", variable = frecuencia)
-  
-  
-    plot_genero(data = doctorales_agrupadas_psi, 
-              ymin = 0, ymax = 100, step = 10,
-              title = "Porcentaje de becas doctorales CONICET\notorgadas por género (2015-2024)\n para la comisión de psicología y ciencias de la educación", variable = porcentaje)
-
-```
-
-```{r Becas postdoctorales ks7 y Ks9, fig.width= 8}
-
-postdoctorales_agrupadas_psi = datos %>% 
-  filter(resultado == "Otorgado") %>% 
-  
-  filter(disciplina_codigo %in% c("KS7", "KS9")) %>% 
-  filter(convocatoria >= 2015) %>%
-  filter(convocatoria < 2025) %>% 
-  filter(escalafon == "Becas postdoctorales") %>% 
-   group_by(convocatoria, genero) %>% 
-  summarise(frecuencia = sum(n)) %>% 
-  group_by(convocatoria) %>% 
-  mutate(total = sum(frecuencia),
-         porcentaje = round(frecuencia/total*100, digits = 2)) 
-
-
-
-  plot_genero(data = postdoctorales_agrupadas_psi, 
-              ymin = 0, ymax = 60, step = 10,
-              title = "Cantidad de becas postdoctorales CONICET\notorgadas por género (2015-2024)\n para la comisión de psicología y ciencias de la educación", variable = frecuencia)
-  
-  
-    plot_genero(data = postdoctorales_agrupadas_psi, 
-              ymin = 0, ymax = 100, step = 10,
-              title = "Porcentaje de becas postdoctorales CONICET\notorgadas por género (2015-2024)\n para la comisión de psicología y ciencias de la educación", variable = porcentaje)
-
-```
-
-
-
+## Cantidad y porcentaje de ingresos CIC otorgadospor género
 
 ```{r CIC total, fig.width= 8}
 
@@ -191,43 +171,181 @@ cic_agrupados = datos_cic %>%
 
 
   plot_genero(data = cic_agrupados, 
-              ymin = 0, ymax = 800, step = 100,
+              ymin = 0, ymax = 800, step = 100, xmin = 2015,
               title = "Cantidad de ingresos CIC CONICET\notorgados por género (2015-2024)",
               variable = frecuencia, ylab = "Ingresos otorgados")
   
   
     plot_genero(data = cic_agrupados, 
-              ymin = 0, ymax = 100, step = 10,
+              ymin = 0, ymax = 100, step = 10, xmin = 2015,
               title = "Porcentaje de ingresos CIC CONICET\notorgados por género (2015-2024)",
               variable = porcentaje, ylab = "Ingresos otorgados")
 
 ```
 
-```{r CIC ks7 y ks9, fig.width= 8}
+## Proporción (otorgadas sobre postulantes) de becas doctorales otorgadas por género
 
-cic_agrupados_psi = datos_cic %>% 
-  filter(disciplina_codigo %in% c("KS7", "KS9")) %>%
-  filter(resultado == "Otorgado") %>% 
-  filter(convocatoria >= 2015) %>%
+```{r Proporción becas doctorales total, fig.width= 10}
+
+
+doctorales_agrupadas = datos %>% 
+  # filter(resultado == "Otorgado") %>%
+  # filter(disciplina_codigo %in% c("KS7", "KS9")) %>% 
+  filter(convocatoria >= 2020) %>%
   filter(convocatoria < 2025) %>% 
-   group_by(convocatoria, genero) %>% 
+  filter(escalafon == "Becas doctorales") %>% 
+   group_by(convocatoria, genero, resultado) %>% 
   summarise(frecuencia = sum(n)) %>% 
-  group_by(convocatoria) %>% 
+  group_by(convocatoria, genero) %>% 
+  mutate(total = sum(frecuencia),
+         porcentaje = round(frecuencia/total*100, digits = 2)) %>% 
+  filter(resultado == "Otorgado") %>% 
+  filter(genero != "X")
+
+
+
+plot_genero_bar <- function(data, title, ymin, ymax, step, variable, ylab ="Becas otorgadas"){
+  
+  data %>% 
+    ggplot(aes(x = convocatoria, y = {{variable}}, fill = genero))+
+    # geom_line(linewidth = 1.5)+
+    geom_bar(stat = "identity", position = "dodge")+
+    theme_minimal(base_size = 18)+
+    scale_x_continuous(limits = c(2019.55, 2024.5), breaks = c(2020:2024))+
+    scale_y_continuous(limits = c(ymin, ymax), breaks = seq(ymin,ymax, by = step))+
+    ggtitle(title)+
+    theme_litera_minimal() +
+        geom_label(
+        aes(label = {{variable}}, group = genero),
+        position = position_dodge(width = 0.9),
+        vjust = -.5,
+        size =5, fill = "white", color = "black"
+      ) +
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0, 0.9),
+      legend.justification.inside = "left",
+      legend.direction = "horizontal",
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+      axis.title.x = element_text(margin = margin(t = 10)),
+      plot.subtitle = element_text(size=14, face="italic", color="black")
+    ) +
+    labs(y = ylab, x = "Convocatoria")+
+    geom_text(aes(label = "@fedegiovannetti\n@neurotransmitiendo", x = max(convocatoria), y = ymax),
+              size = 4, alpha = 0.3, hjust = 1, vjust = 1, color = "darkgrey")+
+    scale_color_pastel()
+  
+  
+  
+}
+
+
+
+
+    plot_genero_bar(data = doctorales_agrupadas, 
+              ymin = 0, ymax = 70, step = 10,
+              title = "Porcentaje de becas doctorales CONICET\notorgadas por género (2015-2024)", variable = porcentaje)+
+      coord_cartesian(ylim = c(35,80))
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+## Representación de género para las distintas etapas de la carrera investigador de CONICET
+
+
+```{r representación tijera, fig.width= 10}
+
+
+
+planta_2024 <- readxl::read_excel("data/escalafon_genero_conicet_en_cifras_2024.xlsx")
+becas_2024 <- readxl::read_excel("data/becas_genero_conicet_en_cifras_2024.xlsx")
+
+planta_2024_agrupada <- planta_2024 %>% 
+  mutate(Escalafón = paste(Escalafón, Categoría)) %>% 
+  mutate(Género = case_when(
+    Género == "Mujer" ~ "Mujeres",
+    Género == "Hombre" ~ "Hombres",
+    Género == "Otro" ~ "Otros" 
+  )) %>% 
+  filter(grepl("INVESTIGADOR", Escalafón)) %>% 
+  group_by(Escalafón, Género) %>% 
+  summarise(frecuencia = n()) %>% 
+  group_by(Escalafón) %>% 
+  mutate(total = sum(frecuencia),
+         porcentaje = round(frecuencia/total*100, digits = 2)) 
+
+
+becas_2024_agrupada <- becas_2024 %>% 
+  rename(Escalafón = `Tipo de Beca`) %>% 
+  rename(Género = Genero) %>% 
+  group_by(Escalafón, Género) %>% 
+  summarise(frecuencia = n()) %>% 
+  group_by(Escalafón) %>% 
   mutate(total = sum(frecuencia),
          porcentaje = round(frecuencia/total*100, digits = 2)) 
 
 
 
-  plot_genero(data = cic_agrupados_psi, 
-              ymin = 0, ymax = 50, step = 5,
-              title = "Cantidad de ingresos CIC CONICET\notorgados por género (2015-2024)\n para la comisión de psicología y ciencias de la educación",
-              variable = frecuencia, ylab = "Ingresos otorgados")
-  
-  
-    plot_genero(data = cic_agrupados_psi, 
+planta_2024_agrupada <- rbind(planta_2024_agrupada, becas_2024_agrupada)
+
+
+
+escalafones_order <- c("BECAS\nDOCTORALES",
+"BECAS\nPOSTDDOCTORALES",
+"INVESTIGADORES\nASISTENTES",
+"INVESTIGADORES\nADJUNTOS",
+"INVESTIGADORES\nINDEPENDIENTES",
+"INVESTIGADORES\nPRINCIPALES",
+"INVESTIGADORES\nSUPERIORES")
+
+
+
+planta_2024_agrupada = planta_2024_agrupada%>% 
+  mutate(Escalafón = case_when(
+    Escalafón == "DOCTORALES" ~ "BECAS\nDOCTORALES",
+    Escalafón == "POSTDOCTORALES" ~ "BECAS\nPOSTDDOCTORALES",
+   Escalafón == "INVESTIGADORES ASISTENTES"  ~ "INVESTIGADORES\nASISTENTES",
+   Escalafón == "INVESTIGADORES ADJUNTOS" ~ "INVESTIGADORES\nADJUNTOS",
+   Escalafón == "INVESTIGADORES INDEPENDIENTES" ~ "INVESTIGADORES\nINDEPENDIENTES",
+   Escalafón == "INVESTIGADORES PRINCIPALES" ~ "INVESTIGADORES\nPRINCIPALES",
+   Escalafón == "INVESTIGADORES SUPERIORES" ~ "INVESTIGADORES\nSUPERIORES",
+  )) %>% 
+
+
+  mutate(Escalafón = factor(Escalafón, levels = escalafones_order)) %>% 
+  arrange(Escalafón)
+
+planta_2024_agrupada %>% 
+  plot_genero_escalafon(
+                        
               ymin = 0, ymax = 100, step = 10,
-              title = "Porcentaje de ingresos CIC CONICET\notorgados por género (2015-2024)\n para la comisión de psicología y ciencias de la educación",
-              variable = porcentaje, ylab = "Ingresos otorgados")
+              title = "Porcentaje de representación de género\na lo largo de la carrera científica en CONICET (año 2024)", variable = porcentaje) 
+  
 
 ```
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+```
+
+
 

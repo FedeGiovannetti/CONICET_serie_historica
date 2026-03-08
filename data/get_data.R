@@ -19,3 +19,7 @@ datos_genero_cic <- datos_cic %>%
   summarise(n = n())
 
 write.csv(datos_genero_cic, "data/datos_genero_cic.csv", row.names = F)
+
+
+
+
