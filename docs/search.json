@@ -53,5 +53,99 @@
     "title": "Series históricas e información sobre becas (doctorales y postdoctorales) e investigadores del CONICET",
     "section": "",
     "text": "Este repo incluye datos sobre la cantidad de becas doctorales y posdoctorales e ingresos CIC otorgados por el CONICET a lo largo de los años. Pueden visualizar algunos de estos datos en https://fedegiovannetti.github.io/CONICET_serie_historica/\nLos valores mostrados son los anunciados por CONICET en su página al momento de la publicación de resultados. Estos valores no incluyen las posibles diferencias por becas adjudicadas, bajas, reconsideraciones u otros.\nActualmente los datos se muestran para las convocatorias de Temas Generales y Temas Estratégicos. Próximamente se incluirán otro tipo de convocatorias (e.g. fortalecimiento) asi como también los ingresos CIC. En algunos casos puede haber datos faltantes por haber encontrado errores, inconsistencias o simplemente no haber encontrado datos en los registros del organismo. Todos los datos son abiertos y estan disponibles en el repo.\nLa página y el repo son mantenidos por Federico Giovannetti. Forma parte del proyecto de Agendas Científicas impulsado junto con Mariana Smulski. Los datos del Gran Área de Ciencias Sociales y Humanidades fueron recabados junto con Fernando Gonzalez Cantero. Los datos sobre diferencias de género fueron trabajados junto con Neurotransmitiendo.\nEn la barra de la izquierda podrán ver, además de las series históricas actualizadas, algunos proyectos relacionados."
+  },
+  {
+    "objectID": "analisis_todas_las_areas.html",
+    "href": "analisis_todas_las_areas.html",
+    "title": "Análisis general (todas las áreas)",
+    "section": "",
+    "text": "En esta sección, se visualizan los datos de becas doctorales y postdoctorales sin agrupar por Gran Área.\n \n\n\n\n\n\n\n\n\n\nEn esta sección, se visualizan los datos de becas doctorales y postdoctorales sin agrupar por Gran Área, agrupadas por temas generales y estratégicos.\nA partir de 2025 la división de temas generales vs. estratégicos dejó de existir por lo que queda pendiente actualizar los gráficos para contener los distintos cambios.",
+    "crumbs": [
+      "Inicio",
+      "Series históricas",
+      "Análisis general (todas las áreas)"
+    ]
+  },
+  {
+    "objectID": "analisis_ks.html",
+    "href": "analisis_ks.html",
+    "title": "Análisis Gran Area Ciencias Sociales y Humanidades (KS)",
+    "section": "",
+    "text": "En esta sección, se visualizan los datos de becas doctorales y postdoctorales para el Gran Área de Ciencias Sociales y Humanidades (KS). Es importante tener en cuenta que algunas de las comisiones fueron dividiendose y cambiando su composición a lo largo de los años. Ponemos a disposición los datos con la idea de que quienes quieran hacer otros análisis, o focalizarse en alguna comisión en particular, puedan hacerlo con el menor esfuerzo posible.\nEn primer lugar, se presentan los datos agrupados para becas doctorales y postdoctorales. Luego, se muestran desagregados por comisión.\nEs relevante mencionar que los datos de postulantes para becas postdoctorales 2025 son los anunciados como “no otorgados” y probablemente sufran leves cambios cuando el organismo anuncie oficialmente la cantidad de postulantes.\n \n\n\n\nBecas doctorales para todo el gran área\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\nBecas postdoctorales para todo el gran área\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\nBecas doctorales por comisión\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n \n\n\n\nBecas postdoctorales por comisión",
+    "crumbs": [
+      "Inicio",
+      "Series históricas",
+      "Análisis Gran Area Ciencias Sociales y Humanidades (KS)"
+    ]
+  },
+  {
+    "objectID": "analisis_CIC_serie.html",
+    "href": "analisis_CIC_serie.html",
+    "title": "Análisis Ingresos CIC 2022-2023",
+    "section": "",
+    "text": "# A tibble: 2 × 5\n# Groups:   Convocatoria [2]\n  Gran.area              Convocatoria Postulantes total proporcion\n  &lt;chr&gt;                  &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;\n1 Sociales y humanidades CIC 2022             440  1117       39.4\n2 Sociales y humanidades CIC 2023             325   752       43.2\n\n\n# A tibble: 2 × 5\n# Groups:   Convocatoria [2]\n  Gran.area              Convocatoria Ingresos total proporcion\n  &lt;chr&gt;                  &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;\n1 Sociales y humanidades CIC 2022          109   436       25  \n2 Sociales y humanidades CIC 2023           40   210       19.0"
+  },
+  {
+    "objectID": "analisis_CIC_serie.html#postulantes-e-ingresos-para-temas-generales-ks-2022-vs.-2023",
+    "href": "analisis_CIC_serie.html#postulantes-e-ingresos-para-temas-generales-ks-2022-vs.-2023",
+    "title": "Análisis Ingresos CIC 2022-2023",
+    "section": "",
+    "text": "# A tibble: 2 × 5\n# Groups:   Convocatoria [2]\n  Gran.area              Convocatoria Postulantes total proporcion\n  &lt;chr&gt;                  &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;\n1 Sociales y humanidades CIC 2022             440  1117       39.4\n2 Sociales y humanidades CIC 2023             325   752       43.2\n\n\n# A tibble: 2 × 5\n# Groups:   Convocatoria [2]\n  Gran.area              Convocatoria Ingresos total proporcion\n  &lt;chr&gt;                  &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;\n1 Sociales y humanidades CIC 2022          109   436       25  \n2 Sociales y humanidades CIC 2023           40   210       19.0"
+  },
+  {
+    "objectID": "analisis_CIC_serie.html#proporción-de-ingresos-para-las-grandes-áreas-temas-generales",
+    "href": "analisis_CIC_serie.html#proporción-de-ingresos-para-las-grandes-áreas-temas-generales",
+    "title": "Análisis Ingresos CIC 2022-2023",
+    "section": "2.1. Proporción de ingresos para las Grandes Áreas (Temas generales)",
+    "text": "2.1. Proporción de ingresos para las Grandes Áreas (Temas generales)"
+  },
+  {
+    "objectID": "analisis_CIC_serie.html#sociales-y-humanidades",
+    "href": "analisis_CIC_serie.html#sociales-y-humanidades",
+    "title": "Análisis Ingresos CIC 2022-2023",
+    "section": "3.1. Sociales y humanidades",
+    "text": "3.1. Sociales y humanidades"
+  },
+  {
+    "objectID": "analisis_CIC_serie.html#ciencias-biológicas-y-de-la-salud",
+    "href": "analisis_CIC_serie.html#ciencias-biológicas-y-de-la-salud",
+    "title": "Análisis Ingresos CIC 2022-2023",
+    "section": "3.2. Ciencias Biológicas y de la Salud",
+    "text": "3.2. Ciencias Biológicas y de la Salud"
+  },
+  {
+    "objectID": "analisis_CIC_serie.html#ciencias-agrarias-de-las-ingenierías-y-de-los-materiales",
+    "href": "analisis_CIC_serie.html#ciencias-agrarias-de-las-ingenierías-y-de-los-materiales",
+    "title": "Análisis Ingresos CIC 2022-2023",
+    "section": "3.3. Ciencias agrarias, de las ingenierías y de los materiales",
+    "text": "3.3. Ciencias agrarias, de las ingenierías y de los materiales"
+  },
+  {
+    "objectID": "analisis_CIC_serie.html#ciencias-exactas-y-naturales",
+    "href": "analisis_CIC_serie.html#ciencias-exactas-y-naturales",
+    "title": "Análisis Ingresos CIC 2022-2023",
+    "section": "3.4. Ciencias Exactas y Naturales",
+    "text": "3.4. Ciencias Exactas y Naturales"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n\n[1] 2"
+  },
+  {
+    "objectID": "analisis_fechas_ingresos.html",
+    "href": "analisis_fechas_ingresos.html",
+    "title": "Análisis general (todas las áreas)",
+    "section": "",
+    "text": "En esta sección, se visualiza un análisis muy simple de la cantidad de dias que pasaron entre resultados de convocatorias CIC"
+  },
+  {
+    "objectID": "analisis_KS7.html",
+    "href": "analisis_KS7.html",
+    "title": "Análisis KS7",
+    "section": "",
+    "text": "En esta sección, se visualizan los datos de becas doctorales y postdoctorales para el Gran Área de Ciencias Sociales y Humanidades (KS). Es importante tener en cuenta que algunas de las Comisión fueron dividiendose y cambiando su composición a lo largo de los años. Ponemos a disposición los datos con la idea de que quienes quieran hacer otros análisis, o focalizarse en alguna comisión en particular, puedan hacerlo con el menor esfuerzo posible.\nEn primer lugar, se presentan los datos agrupados para becas doctorales y postdoctorales. Luego, se muestran desagregados por comisión.\nEs relevante mencionar que los datos de postulantes para becas postdoctorales 2025 son los anunciados como “no otorgados” y probablemente sufran leves cambios cuando el organismo anuncie oficialmente la cantidad de postulantes."
   }
 ]

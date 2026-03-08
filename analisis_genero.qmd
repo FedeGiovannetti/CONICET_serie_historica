@@ -204,7 +204,7 @@ doctorales_agrupadas = datos %>%
 
 
 
-plot_genero_bar <- function(data, title, ymin, ymax, step, variable, ylab ="Becas otorgadas"){
+plot_genero_bar <- function(data, title, ymin, ymax, step, variable, ylab ="Proporción (%)"){
   
   data %>% 
     ggplot(aes(x = convocatoria, y = {{variable}}, fill = genero))+
@@ -259,6 +259,38 @@ plot_genero_bar <- function(data, title, ymin, ymax, step, variable, ylab ="Beca
 
 
 ```
+
+```{r Proporción cic total, fig.width= 10}
+
+CIC_agrupadas = datos_cic %>% 
+  filter(convocatoria >= 2020) %>%
+  filter(convocatoria < 2024) %>% 
+   group_by(convocatoria, genero, resultado) %>% 
+  summarise(frecuencia = sum(n)) %>% 
+  group_by(convocatoria, genero) %>% 
+  mutate(total = sum(frecuencia),
+         porcentaje = round(frecuencia/total*100, digits = 2)) %>% 
+  filter(resultado == "Otorgado") %>% 
+  filter(genero != "X")
+
+
+
+
+    plot_genero_bar(data = CIC_agrupadas, 
+              ymin = 0, ymax = 70, step = 10,
+              title = "Porcentaje de becas doctorales CONICET\notorgadas por género (2015-2024)", variable = porcentaje)+
+      coord_cartesian(ylim = c(0,60))
+
+
+
+
+
+
+
+
+```
+
+
 
 ## Representación de género para las distintas etapas de la carrera investigador de CONICET
 
