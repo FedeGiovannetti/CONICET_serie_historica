@@ -1,4 +1,4 @@
-# Series históricas de becas doctorales y postdoctorales de CONICET
+# Series históricas e información sobre becas (doctorales y postdoctorales) e investigadores de CONICET
 
 Este repo incluye datos sobre la cantidad de becas doctorales y posdoctorales otorgadas por el CONICET a lo largo de los años. 
 Pueden visualizar algunos de estos datos en [https://fedegiovannetti.github.io/CONICET_serie_historica/](https://fedegiovannetti.github.io/CONICET_serie_historica/)
@@ -7,4 +7,4 @@ Los valores mostrados son los anunciados por CONICET en su página al momento de
 
 Actualmente los datos se muestran para las convocatorias de Temas Generales y Temas Estratégicos. Próximamente se incluirán otro tipo de convocatorias (e.g. fortalecimiento) asi como también los ingresos CIC. En algunos casos puede haber datos faltantes por haber encontrado errores, inconsistencias o simplemente no haber encontrado datos en los registros del organismo. Todos los datos son abiertos y estan disponibles en el [repo](https://github.com/FedeGiovannetti/CONICET_serie_historica).
 
-La página y el repo son mantenidos por [Federico Giovannetti](https://linktr.ee/fedegiova). Forma parte del proyecto de Agendas Científicas impulsado junto con [Mariana Smulski](https://bicyt.conicet.gov.ar/fichas/p/mariana-celeste-smulski). Los datos del Gran Área de Ciencias Sociales y Humanidades fueron recabados junto con [Fernando Gonzalez Cantero](https://www.linkedin.com/in/fernando-gonzalez-cantero-b3108a4b).
+La página y el repo son mantenidos por [Federico Giovannetti](https://linktr.ee/fedegiova). Forma parte del proyecto de Agendas Científicas impulsado junto con [Mariana Smulski](https://bicyt.conicet.gov.ar/fichas/p/mariana-celeste-smulski). Los datos del Gran Área de Ciencias Sociales y Humanidades fueron recabados junto con [Fernando Gonzalez Cantero](https://www.linkedin.com/in/fernando-gonzalez-cantero-b3108a4b). Los datos sobre diferencias de género fueron trabajados junto con [Neurotransmitiendo](https://www.instagram.com/neurotransmitiendo/).
